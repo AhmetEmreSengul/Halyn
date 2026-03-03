@@ -7,13 +7,15 @@ import authRoutes from "./routes/auth.route";
 import { connectDB } from "./lib/db";
 import { ENV } from "./lib/env";
 
-const app = express();
 const PORT = ENV.PORT || 3000;
 
+const app = express();
+
+app.use(cookieParser());
 app.use(cors({ origin: ENV.BASE_URL, credentials: true }));
 app.use(express.json());
-app.use(cookieParser());
 app.use(passport.initialize());
+app.set("trust proxy", 1);
 
 app.use("/auth", authRoutes);
 
