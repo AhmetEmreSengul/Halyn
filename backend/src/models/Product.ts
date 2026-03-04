@@ -1,5 +1,3 @@
-// src/modules/product/product.model.ts
-
 import { Schema, model, HydratedDocument } from "mongoose";
 
 export type HalalStatus = "halal" | "haram" | "doubtful" | "unknown";

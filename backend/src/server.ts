@@ -4,6 +4,7 @@ import express from "express";
 import passport from "passport";
 import path from "path";
 import authRoutes from "./routes/auth.route";
+import scanRoutes from "./routes/scan.route";
 import { connectDB } from "./lib/db";
 import { ENV } from "./lib/env";
 
@@ -18,6 +19,7 @@ app.use(passport.initialize());
 app.set("trust proxy", 1);
 
 app.use("/auth", authRoutes);
+app.use("/scan", scanRoutes);
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
