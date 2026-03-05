@@ -3,7 +3,7 @@ import { Product } from "../models/Product";
 import axios from "axios";
 import { analyzeIngredients } from "../lib/utils";
 
-export const scanProduct = async (req: Request, res: Response) => {
+export const scanProductBarcode = async (req: Request, res: Response) => {
   try {
     const { barcode } = req.body;
 
@@ -25,7 +25,7 @@ export const scanProduct = async (req: Request, res: Response) => {
     }
 
     const response = await axios.get(
-      `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
+      `https://world.openfoodfacts.org/api/v2/product/${barcode}`,
     );
 
     if ((response.data as any).status === 0) {
@@ -66,5 +66,32 @@ export const scanProduct = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Scan failed" });
+  }
+};
+
+export const scanIngredientsText = async (req: Request, res: Response) => {
+  try {
+    const { ingredientsText } = req.body;
+
+    if (!ingredientsText || typeof ingredientsText !== "string") {
+      return res.status(400).json({
+        message: "Invalid ingredients text",
+      });
+    }
+
+    const analysis = await analyzeIngredients(ingredientsText);
+
+    return res.json({
+      ingredientsText,
+      halalStatus: analysis.status,
+      confidenceScore: analysis.confidence,
+      analysisReasons: analysis.reasons,
+      source: "user_scan",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Ingredient scan failed",
+    });
   }
 };

@@ -1,8 +1,9 @@
 import express from "express";
-import { scanProduct } from "../controllers/scan.controller";
+import { scanIngredientsText, scanProductBarcode } from "../controllers/scan.controller";
 
 const router = express.Router();
 
-router.post("/", scanProduct);
+router.post("/barcode", scanProductBarcode);
+router.post("/ingredients", scanIngredientsText);
 
 export default router;
