@@ -1,9 +1,17 @@
 import express from "express";
 import passport from "passport";
 import { protectRoute } from "../middleware/auth.middleware";
-import { googleAuthCallback, login, logout, signup } from "../controllers/auth.controller";
+import {
+  googleAuthCallback,
+  login,
+  logout,
+  signup,
+} from "../controllers/auth.controller";
+import { arcjetProtection } from "../middleware/arcjet.middleware";
 
 const router = express.Router();
+
+router.use(arcjetProtection);
 
 router.post("/signup", signup);
 router.post("/login", login);

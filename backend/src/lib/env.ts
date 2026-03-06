@@ -5,6 +5,8 @@ export const ENV = {
   MONGODB_URI: process.env.MONGODB_URI,
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
+  ARCJET_KEY: process.env.ARCJET_KEY,
+  ARCJET_ENV: process.env.ARCJET_ENV,
   BASE_URL: process.env.BASE_URL,
   CLIENT_URL: process.env.CLIENT_URL,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
