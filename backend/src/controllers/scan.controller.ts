@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Product } from "../models/Product";
 import axios from "axios";
 import { analyzeIngredients } from "../lib/utils";
+import ScanHistory from "../models/ScanHistory";
 
 export const scanProductBarcode = async (req: Request, res: Response) => {
   try {
@@ -21,6 +22,14 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     const existing = await Product.findOne({ barcode });
     if (existing) {
+      if (req.user) {
+        await ScanHistory.create({
+          userId: (req.user as any)._id,
+          productId: existing._id,
+          barcode,
+          scanType: "barcode",
+        });
+      }
       return res.json(existing);
     }
 
@@ -62,6 +71,15 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       },
     });
 
+    if (req.user) {
+      await ScanHistory.create({
+        userId: (req.user as any)._id,
+        productId: newProduct._id,
+        barcode,
+        scanType: "barcode",
+      });
+    }
+
     return res.json(newProduct);
   } catch (error) {
     console.error(error);
@@ -79,7 +97,31 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
       });
     }
 
+    const existing = await ScanHistory.findOne({
+      ingredientsText,
+      scanType: "ingredients",
+    });
+
+    if (existing) {
+      if (req.user) {
+        await ScanHistory.create({
+          userId: (req.user as any)._id,
+          ingredientsText,
+          scanType: "ingredients",
+        });
+      }
+      return res.json(existing);
+    }
+
     const analysis = await analyzeIngredients(ingredientsText);
+
+    if (req.user) {
+      await ScanHistory.create({
+        userId: (req.user as any)._id,
+        ingredientsText,
+        scanType: "ingredients",
+      });
+    }
 
     return res.json({
       ingredientsText,
