@@ -9,11 +9,11 @@ const App = () => {
   return (
     <div className="bg-black w-screen h-screen">
       <Toaster position="top-center" />
-      <Navbar/>
+      <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/Signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </div>
   );
