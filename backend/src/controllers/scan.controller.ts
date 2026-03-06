@@ -30,7 +30,7 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
           scanType: "barcode",
         });
       }
-      return res.json(existing);
+      return res.status(200).json(existing);
     }
 
     const response = await axios.get(
@@ -110,7 +110,7 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
           scanType: "ingredients",
         });
       }
-      return res.json(existing);
+      return res.status(200).json(existing);
     }
 
     const analysis = await analyzeIngredients(ingredientsText);
