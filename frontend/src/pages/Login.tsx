@@ -55,7 +55,7 @@ const Login = () => {
         </button>
         <button
           className="bg-teal-900 text-white p-4 rounded-lg flex items-center justify-center gap-3"
-          type="submit"
+          type="button"
           onClick={handleGoogleLogin}
         >
           Continue with <FaGoogle size={20} />
