@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
+    "@yudiel/react-qr-scanner": "^2.5.1",
     "axios": "^1.13.6",
+    "daisyui": "^5.5.19",
     "framer-motion": "^12.35.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

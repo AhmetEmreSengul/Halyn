@@ -8,7 +8,7 @@ import GoogleSuccess from "./pages/GoogleSuccess";
 
 const App = () => {
   return (
-    <div className="bg-black w-screen h-screen">
+    <div className="bg-black w-screen min-h-screen text-white">
       <Toaster position="top-center" />
       <Navbar />
       <Routes>
