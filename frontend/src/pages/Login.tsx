@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { FaGoogle } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Login = () => {
   const { login, isLoggingIn } = useAuthStore();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -20,6 +21,7 @@ const Login = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     login(formData);
+    navigate("/");
   };
 
   return (

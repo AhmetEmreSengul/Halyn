@@ -8,41 +8,51 @@ export interface Product {
   barcode: string;
   name: string;
   brand?: string;
-
   ingredientsText?: string;
   ingredientsList: string[];
-
   halalStatus: HalalStatus;
   confidenceScore: number;
-
   analysisReasons: string[];
-
   source: "openfoodfacts";
-
-  rawSourceData?: any;
+  rawSourceData?: {
+    completeness: number;
+    last_modified: number;
+  };
   analyzedAt: Date;
+}
+
+interface PastScans {
+  _id: string;
+  scanType: string;
+  productId: Product;
 }
 
 interface ScanStore {
   product: Product | null;
   isLoading: boolean;
+  pastScans: PastScans[];
 
   scanProductBarcode: (barcode: string) => Promise<void>;
   scanProductIngredients: (ingredientsText: string[]) => Promise<void>;
+  getUsersPastScans: () => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
   product: null,
   isLoading: false,
+  pastScans: [],
 
   scanProductBarcode: async (barcode) => {
     try {
-      const res = await axiosInstance.post("/scan/barcode", {barcode});
+      set({ isLoading: true });
+      const res = await axiosInstance.post("/scan/barcode", { barcode });
       set({ product: res.data });
       toast.success("Product scanned.");
     } catch (error: any) {
       console.error(error);
       toast.error(error.response.data.message);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
@@ -53,6 +63,16 @@ export const useScanStore = create<ScanStore>((set) => ({
     } catch (error: any) {
       console.error(error);
       toast.error(error.response.data.message);
+    }
+  },
+
+  getUsersPastScans: async () => {
+    try {
+      const res = await axiosInstance.get("/scan/past-scans");
+      set({ pastScans: res.data });
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching past scans");
     }
   },
 }));

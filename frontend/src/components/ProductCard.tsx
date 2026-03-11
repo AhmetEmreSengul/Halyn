@@ -51,35 +51,31 @@ const ProductCard = ({ product }: { product: Product }) => {
   const circumference = 2 * Math.PI * 28;
   const dashOffset = circumference - (confidence / 100) * circumference;
   return (
-    <div className=" flex items-center justify-center p-8">
-      <div className="w-105 bg-stone-50 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
-        {/* Header */}
+    <div className="px-8 py-4">
+      <div className="w-full md:w-105 bg-stone-50 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
         <div className="px-7 pt-7 pb-5 border-b border-stone-200">
           <div className="flex items-center gap-1.5 mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-            <span className="text-[10px] font-medium tracking-widest uppercase text-stone-400 font-sans">
-              Open Food Facts
+            <span className="text-xs font-extralight tracking-widest uppercase text-stone-400 font-sans">
+              Scanned from {product.source}
             </span>
           </div>
           <h2
-            className="text-2xl font-bold text-stone-900 leading-snug"
+            className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word"
             style={{ fontFamily: "'Georgia', serif" }}
           >
             {product.name}
           </h2>
           {product.brand && (
-            <p className="text-sm text-stone-500 mt-0.5 font-sans">
-              {product.brand}
-            </p>
+            <p className="text-sm text-stone-500 font-sans">{product.brand}</p>
           )}
-          <p className="text-[11px] tracking-widest text-stone-300 mt-2 font-sans">
+          <p className="text-xs tracking-widest text-stone-300 mt-2 font-sans">
             {product.barcode}
           </p>
         </div>
 
-        {/* Status + Confidence */}
         <div
-          className={`px-7 py-5 flex items-center gap-5 border-b border-stone-200 ${s.badge} border-0 border-b`}
+          className={`px-3 py-5 flex items-center gap-5 border-b border-stone-200 ${s.badge} border-0 border-b`}
         >
           <div className="flex items-center gap-3 flex-1">
             <div
@@ -100,7 +96,6 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
           </div>
 
-          {/* Confidence ring */}
           <div className="relative w-16 h-16 shrink-0">
             <svg
               width="64"
@@ -139,7 +134,6 @@ const ProductCard = ({ product }: { product: Product }) => {
           </div>
         </div>
 
-        {/* Analysis */}
         <div className="px-7 py-5 border-b border-stone-200">
           <p className="text-[10px] font-semibold tracking-widest uppercase text-stone-400 mb-3 font-sans">
             Analysis
@@ -159,7 +153,6 @@ const ProductCard = ({ product }: { product: Product }) => {
           </ul>
         </div>
 
-        {/* Ingredients toggle */}
         <button
           onClick={() => setShowIngredients(!showIngredients)}
           className="w-full px-7 py-3.5 flex items-center justify-between text-[12px] font-medium text-stone-600 hover:bg-stone-100 transition-colors border-b border-stone-200 font-sans"

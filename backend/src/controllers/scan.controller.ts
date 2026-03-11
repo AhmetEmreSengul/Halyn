@@ -20,17 +20,21 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       });
     }
 
-    const existing = await Product.findOne({ barcode });
-    if (existing) {
-      if (req.user) {
-        await ScanHistory.create({
-          userId: (req.user as any)._id,
-          productId: existing._id,
-          barcode,
-          scanType: "barcode",
-        });
+    const existingScan = await ScanHistory.findOne({ barcode });
+
+    const existingProduct = await Product.findOne({ barcode });
+    if (existingProduct) {
+      if (!existingScan) {
+        if (req.user) {
+          await ScanHistory.create({
+            userId: (req.user as any)._id,
+            productId: existingProduct._id,
+            barcode,
+            scanType: "barcode",
+          });
+        }
       }
-      return res.status(200).json(existing);
+      return res.status(200).json(existingProduct);
     }
 
     const response = await axios.get(
@@ -72,12 +76,14 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
     });
 
     if (req.user) {
-      await ScanHistory.create({
-        userId: (req.user as any)._id,
-        productId: newProduct._id,
-        barcode,
-        scanType: "barcode",
-      });
+      if (!existingScan) {
+        await ScanHistory.create({
+          userId: (req.user as any)._id,
+          productId: newProduct._id,
+          barcode,
+          scanType: "barcode",
+        });
+      }
     }
 
     return res.json(newProduct);
@@ -135,5 +141,24 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
     res.status(500).json({
       message: "Ingredient scan failed",
     });
+  }
+};
+
+export const getUsersPastScans = async (req: Request, res: Response) => {
+  try {
+    const userId = (req.user as any)._id;
+
+    const scans = await ScanHistory.find({ userId })
+      .sort({ createdAt: -1 })
+      .populate("productId");
+
+    if (!scans) {
+      return res.status(404).json({ message: "Scans not found" });
+    }
+
+    return res.status(200).json(scans);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
