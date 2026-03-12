@@ -109,25 +109,10 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
     });
 
     if (existing) {
-      if (req.user) {
-        await ScanHistory.create({
-          userId: (req.user as any)._id,
-          ingredientsText,
-          scanType: "ingredients",
-        });
-      }
       return res.status(200).json(existing);
     }
 
     const analysis = await analyzeIngredients(ingredientsText);
-
-    if (req.user) {
-      await ScanHistory.create({
-        userId: (req.user as any)._id,
-        ingredientsText,
-        scanType: "ingredients",
-      });
-    }
 
     return res.json({
       ingredientsText,

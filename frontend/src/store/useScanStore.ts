@@ -27,13 +27,22 @@ interface PastScans {
   productId: Product;
 }
 
+export interface IngredientProduct {
+  ingredientsText: string;
+  halalStatus: HalalStatus;
+  confidenceScore: number;
+  source : "openfoodfacts" | "user_scan";
+  analysisReasons: string[];
+}
+
 interface ScanStore {
   product: Product | null;
   isLoading: boolean;
   pastScans: PastScans[];
+  ingredientsProduct: IngredientProduct | null;
 
   scanProductBarcode: (barcode: string) => Promise<void>;
-  scanProductIngredients: (ingredientsText: string[]) => Promise<void>;
+  scanProductIngredients: (ingredientsText: string) => Promise<void>;
   getUsersPastScans: () => Promise<void>;
 }
 
@@ -41,6 +50,7 @@ export const useScanStore = create<ScanStore>((set) => ({
   product: null,
   isLoading: false,
   pastScans: [],
+  ingredientsProduct: null,
 
   scanProductBarcode: async (barcode) => {
     try {
@@ -56,10 +66,13 @@ export const useScanStore = create<ScanStore>((set) => ({
     }
   },
 
-  scanProductIngredients: async (ingredients) => {
+  scanProductIngredients: async (ingredientsText) => {
     try {
-      const res = await axiosInstance.post("/scan/ingredients", ingredients);
-      set({ product: res.data });
+      const res = await axiosInstance.post("/scan/ingredients", {
+        ingredientsText,
+      });
+      set({ ingredientsProduct: res.data });
+      toast.success("Ingredient scanned.");
     } catch (error: any) {
       console.error(error);
       toast.error(error.response.data.message);

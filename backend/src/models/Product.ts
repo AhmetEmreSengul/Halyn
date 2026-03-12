@@ -13,12 +13,14 @@ export interface IProduct {
   halalStatus: HalalStatus;
   confidenceScore: number;
 
-  analysisReasons: string[]; 
+  analysisReasons: string[];
 
   source: "openfoodfacts";
 
-  rawSourceData?: any; 
+  rawSourceData?: any;
   analyzedAt: Date;
+
+  scanCount: number;
 }
 
 export type ProductDocument = HydratedDocument<IProduct>;
@@ -70,8 +72,12 @@ const productSchema = new Schema<IProduct>(
       type: Date,
       default: Date.now,
     },
+    scanCount: {
+      type: Number,
+      default: 0,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Product = model<IProduct>("Product", productSchema);
