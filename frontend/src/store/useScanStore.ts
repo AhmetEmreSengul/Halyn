@@ -19,6 +19,7 @@ export interface Product {
     last_modified: number;
   };
   analyzedAt: Date;
+  scanCount: number;
 }
 
 interface PastScans {
@@ -31,13 +32,14 @@ export interface IngredientProduct {
   ingredientsText: string;
   halalStatus: HalalStatus;
   confidenceScore: number;
-  source : "openfoodfacts" | "user_scan";
+  source: "openfoodfacts" | "user_scan";
   analysisReasons: string[];
 }
 
 interface ScanStore {
   product: Product | null;
   isLoading: boolean;
+  isFetching: boolean;
   pastScans: PastScans[];
   ingredientsProduct: IngredientProduct | null;
 
@@ -49,6 +51,7 @@ interface ScanStore {
 export const useScanStore = create<ScanStore>((set) => ({
   product: null,
   isLoading: false,
+  isFetching: false,
   pastScans: [],
   ingredientsProduct: null,
 
@@ -68,6 +71,7 @@ export const useScanStore = create<ScanStore>((set) => ({
 
   scanProductIngredients: async (ingredientsText) => {
     try {
+      set({ isLoading: true });
       const res = await axiosInstance.post("/scan/ingredients", {
         ingredientsText,
       });
@@ -76,16 +80,21 @@ export const useScanStore = create<ScanStore>((set) => ({
     } catch (error: any) {
       console.error(error);
       toast.error(error.response.data.message);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
   getUsersPastScans: async () => {
     try {
+      set({ isFetching: true });
       const res = await axiosInstance.get("/scan/past-scans");
       set({ pastScans: res.data });
     } catch (error) {
       console.error(error);
       toast.error("Error fetching past scans");
+    } finally {
+      set({ isFetching: false });
     }
   },
 }));

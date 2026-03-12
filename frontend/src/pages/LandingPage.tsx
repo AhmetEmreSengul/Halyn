@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useScanStore } from "../store/useScanStore";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import ProductCard from "../components/ProductCard";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import IngredientScanCard from "../components/IngredientScanCard";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 
 const LandingPage = () => {
   const {
@@ -70,7 +70,7 @@ const LandingPage = () => {
 
       {isLoading && (
         <p>
-          <AiOutlineLoading3Quarters className="size-10 animate-spin mt-10" />
+          <LoadingSkeleton />
         </p>
       )}
       {product && <ProductCard product={product} />}
