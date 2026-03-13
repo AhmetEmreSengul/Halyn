@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { Product } from "../models/Product";
 import axios from "axios";
-import { analyzeIngredients } from "../lib/utils";
+
 import ScanHistory from "../models/ScanHistory";
+import { analyzeIngredients } from "../lib/analyzer";
 
 const normalizeText = (text: string) => {
   return text
@@ -74,7 +75,7 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     const normalizedIngredientsText = normalizeText(ingredientsText);
 
-    const analysis = await analyzeIngredients(normalizedIngredientsText);
+    const analysis =  analyzeIngredients(normalizedIngredientsText);
 
     const newProduct = await Product.create({
       barcode,
@@ -129,7 +130,7 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
       return res.status(200).json(existing);
     }
 
-    const analysis = await analyzeIngredients(ingredientsText);
+    const analysis = analyzeIngredients(ingredientsText);
 
     return res.json({
       ingredientsText,
