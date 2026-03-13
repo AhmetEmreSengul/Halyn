@@ -36,7 +36,7 @@ export const analyzeIngredients = async (ingredientsText: string) => {
   const rules = await IngredientRule.find({ isActive: true });
 
   const matchedRules = rules.filter((rule) =>
-    normalized.includes(rule.keyword),
+    rule.keywords.some((k: string) => normalized.includes(k)),
   );
 
   if (matchedRules.length === 0) {
@@ -52,7 +52,7 @@ export const analyzeIngredients = async (ingredientsText: string) => {
     return {
       status: "haram",
       confidence: 100,
-      reasons: haramRules.map((r) => `Contains ${r.keyword}`),
+      reasons: matchedRules.map((r) => `Contains ${r.keywords[0]}`),
     };
   }
 
@@ -67,6 +67,6 @@ export const analyzeIngredients = async (ingredientsText: string) => {
   return {
     status: "doubtful",
     confidence,
-    reasons: matchedRules.map((r) => `Contains ${r.keyword}`),
+    reasons: matchedRules.map((r) => `Contains ${r.keywords[0]}`),
   };
 };

@@ -1,9 +1,9 @@
 import { Schema, model, HydratedDocument } from "mongoose";
 
-export type RuleStatus = "haram" | "doubtful";
+export type RuleStatus = "halal" | "haram" | "doubtful";
 
 export interface IIngredientRule {
-  keyword: string;
+  keywords: string[];
   status: RuleStatus;
   confidenceImpact: number;
   notes?: string;
@@ -14,17 +14,15 @@ export type IngredientRuleDocument = HydratedDocument<IIngredientRule>;
 
 const ingredientRuleSchema = new Schema<IIngredientRule>(
   {
-    keyword: {
-      type: String,
+    keywords: {
+      type: [String],
       required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
+      index: true,
     },
 
     status: {
       type: String,
-      enum: ["haram", "doubtful"],
+      enum: ["halal", "haram", "doubtful"],
       required: true,
     },
 

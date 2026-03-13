@@ -4,6 +4,17 @@ import axios from "axios";
 import { analyzeIngredients } from "../lib/utils";
 import ScanHistory from "../models/ScanHistory";
 
+const normalizeText = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/ş/g, "s")
+    .replace(/ı/g, "i")
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c");
+};
+
 export const scanProductBarcode = async (req: Request, res: Response) => {
   try {
     const { barcode } = req.body;
@@ -61,7 +72,9 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
     const ingredientsList =
       productData.ingredients?.map((i: any) => i.text) || [];
 
-    const analysis = await analyzeIngredients(ingredientsText);
+    const normalizedIngredientsText = normalizeText(ingredientsText);
+
+    const analysis = await analyzeIngredients(normalizedIngredientsText);
 
     const newProduct = await Product.create({
       barcode,

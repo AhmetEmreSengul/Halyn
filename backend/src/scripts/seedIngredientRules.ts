@@ -4,70 +4,39 @@ import { ENV } from "../lib/env";
 
 const rules = [
   {
-    keyword: "alcohol",
+    keywords: ["alcohol", "ethanol", "alkol", "etil alkol"],
     status: "haram",
     confidenceImpact: 100,
   },
   {
-    keyword: "ethanol",
+    keywords: ["wine", "şarap"],
     status: "haram",
     confidenceImpact: 100,
   },
   {
-    keyword: "wine",
-    status: "haram",
-    confidenceImpact: 100,
-  },
-  {
-    keyword: "whiskey",
-    status: "haram",
-    confidenceImpact: 100,
-  },
-  {
-    keyword: "gelatin",
+    keywords: ["gelatin", "jelatin"],
     status: "haram",
     confidenceImpact: 90,
   },
   {
-    keyword: "pork",
+    keywords: ["pork", "domuz"],
     status: "haram",
     confidenceImpact: 100,
   },
   {
-    keyword: "e120",
+    keywords: ["natural flavors", "aroma vericiler", "doğal aroma"],
+    status: "doubtful",
+    confidenceImpact: 40,
+  },
+  {
+    keywords: ["lecithin", "lesitin"],
+    status: "doubtful",
+    confidenceImpact: 30,
+  },
+  {
+    keywords: ["e120", "e-120", "e 120", "carmine", "cochineal", "karmin"],
     status: "haram",
-    confidenceImpact: 95,
-  },
-
-  {
-    keyword: "natural flavors",
-    status: "doubtful",
-    confidenceImpact: 40,
-  },
-  {
-    keyword: "flavoring",
-    status: "doubtful",
-    confidenceImpact: 40,
-  },
-  {
-    keyword: "mono and diglycerides",
-    status: "doubtful",
-    confidenceImpact: 40,
-  },
-  {
-    keyword: "glycerin",
-    status: "doubtful",
-    confidenceImpact: 30,
-  },
-  {
-    keyword: "lecithin",
-    status: "doubtful",
-    confidenceImpact: 30,
-  },
-  {
-    keyword: "beeswax",
-    status: "doubtful",
-    confidenceImpact: 20,
+    confidenceImpact: 100,
   },
 ];
 
