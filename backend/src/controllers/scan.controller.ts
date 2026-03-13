@@ -34,6 +34,10 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
           });
         }
       }
+      await Product.updateOne(
+        { _id: existingProduct._id },
+        { $inc: { scanCount: 1 } },
+      );
       return res.status(200).json(existingProduct);
     }
 

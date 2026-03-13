@@ -45,7 +45,7 @@ const LandingPage = () => {
         />
       </div>
       <h1>You can manually enter a barcode or an ingredient.</h1>
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3 flex-col md:flex-row">
         <form onSubmit={handleScanSubmit} className="flex flex-col gap-2">
           <input
             placeholder="Barcode"
