@@ -4,6 +4,7 @@ import { Scanner } from "@yudiel/react-qr-scanner";
 import ProductCard from "../components/ProductCard";
 import IngredientScanCard from "../components/IngredientScanCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
+import toast from "react-hot-toast";
 
 const LandingPage = () => {
   const {
@@ -28,8 +29,13 @@ const LandingPage = () => {
 
   const handleIngredientSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
+    if (ingredientsText.length <= 3) {
+      toast.error("Input too short.");
+      setIngredientsText("");
+      return;
+    }
     useScanStore.setState({ product: null });
-    scanProductIngredients(ingredientsText.replace(" ", ","));
+    scanProductIngredients(ingredientsText);
     setIngredientsText("");
   };
 
@@ -37,7 +43,7 @@ const LandingPage = () => {
     getMostPopularProducts();
   }, []);
 
-  console.log(popularScans);
+  console.log(product);
 
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">

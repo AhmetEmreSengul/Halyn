@@ -1,8 +1,8 @@
 export type HalalStatus = "halal" | "haram" | "doubtful" | "unknown";
 
 export interface FlaggedIngredient {
-  matched: string;
-  keyword: string;
+  matched: string; // what was found in the text
+  keyword: string; // which rule keyword triggered
   status: "haram" | "doubtful";
   reason: string;
   eNumber?: string;
@@ -22,9 +22,9 @@ interface Rule {
   status: "haram" | "doubtful";
   reason: string;
   eNumber?: string;
-
+  // If these strings appear near the keyword, the rule is negated (context override)
   halalOverrideContext?: string[];
-
+  // If these strings appear near the keyword, severity is upgraded to haram
   haramUpgradeContext?: string[];
 }
 
@@ -334,7 +334,6 @@ const RULES: Rule[] = [
   },
 ];
 
-// Words that only appear in actual ingredient lists
 const INGREDIENT_SIGNAL_WORDS = [
   "sugar",
   "salt",
@@ -384,12 +383,26 @@ const INGREDIENT_SIGNAL_WORDS = [
   "soya",
   "kakao",
   "vanilin",
+  // E-numbers pattern handled separately
 ];
 
 const E_NUMBER_PATTERN = /\be-?\d{3,4}[a-z]?\b/i;
 const PERCENTAGE_PATTERN = /\d+(\.\d+)?%/;
-
 const SEPARATOR_PATTERN = /[,;]/;
+
+const ALL_RULE_KEYWORDS: string[] = RULES.flatMap((r) => r.keywords);
+
+function isKnownIngredient(lower: string): boolean {
+  return ALL_RULE_KEYWORDS.some((kw) => {
+    const kwLower = kw.toLowerCase();
+
+    if (!kwLower.includes(" ")) {
+      return new RegExp(`\\b${kwLower}\\b`).test(lower);
+    }
+
+    return lower.includes(kwLower);
+  });
+}
 
 function isValidIngredientList(text: string): {
   valid: boolean;
@@ -397,22 +410,22 @@ function isValidIngredientList(text: string): {
 } {
   const lower = text.toLowerCase().trim();
 
-  if (lower.length < 5) {
-    return {
-      valid: false,
-      message: "Input is too short to be an ingredient list.",
-    };
+  if (lower.length < 2) {
+    return { valid: false, message: "Input is too short." };
   }
 
   const wordCount = lower.split(/\s+/).length;
   const sentenceCount = (lower.match(/[.!?]/g) || []).length;
-
   if (sentenceCount >= 3 && wordCount / sentenceCount < 8) {
     return {
       valid: false,
       message:
         "This looks like a sentence or paragraph, not an ingredient list.",
     };
+  }
+
+  if (isKnownIngredient(lower)) {
+    return { valid: true };
   }
 
   const hasSignalWord = INGREDIENT_SIGNAL_WORDS.some((w) => lower.includes(w));
@@ -431,7 +444,7 @@ function isValidIngredientList(text: string): {
     return {
       valid: false,
       message:
-        "This doesn't appear to be an ingredient list. Please enter the ingredients from a food product label.",
+        "This doesn't appear to be an ingredient or ingredient list. Please enter an ingredient name or paste the ingredients from a product label.",
     };
   }
 
@@ -568,8 +581,8 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
   } else {
     status = "halal";
 
-    const tokenCount = tokens.length;
-    confidence = tokenCount > 5 ? 70 : 55;
+    const isSingleIngredient = tokens.length <= 1 && isKnownIngredient(lower);
+    confidence = isSingleIngredient ? 85 : tokens.length > 5 ? 70 : 55;
   }
 
   const reasons: string[] = [];
