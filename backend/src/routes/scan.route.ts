@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getMostPopularProducts,
   getUsersPastScans,
   scanIngredientsText,
   scanProductBarcode,
@@ -16,5 +17,6 @@ router.use(arcjetProtection);
 router.post("/barcode", scanProductBarcode);
 router.post("/ingredients", scanIngredientsText);
 router.get("/past-scans", protectRoute, getUsersPastScans);
+router.get("/popular", protectRoute, getMostPopularProducts);
 
 export default router;

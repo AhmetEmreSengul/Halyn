@@ -151,3 +151,18 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getMostPopularProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await Product.find().sort({ scanCount: -1 }).limit(3);
+
+    if (!products) {
+      return res.status(404).json({ message: "Products not found" });
+    }
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

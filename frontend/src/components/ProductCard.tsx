@@ -54,11 +54,18 @@ const ProductCard = ({ product }: { product: Product }) => {
     <div className="px-8 py-4">
       <div className="w-full md:w-105 bg-stone-50 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
         <div className="px-7 pt-7 pb-5 border-b border-stone-200">
-          <div className="flex items-center gap-1.5 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-            <span className="text-xs font-extralight tracking-widest uppercase text-stone-400 font-sans">
-              Source {product.source}
-            </span>
+          <div className="flex items-center justify-between gap-1.5 mb-3">
+            <div>
+              <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+              <span className="text-xs font-extralight tracking-widest uppercase text-stone-400 font-sans">
+                Source <span className="font-bold">{product.source}</span>
+              </span>
+            </div>
+            <p className="text-xs  text-stone-400">
+              Scanned
+              <span className="font-extrabold mx-1">{product.scanCount}</span>
+              times
+            </p>
           </div>
           <h2
             className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word"

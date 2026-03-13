@@ -41,11 +41,13 @@ interface ScanStore {
   isLoading: boolean;
   isFetching: boolean;
   pastScans: PastScans[];
+  popularScans: Product[];
   ingredientsProduct: IngredientProduct | null;
 
   scanProductBarcode: (barcode: string) => Promise<void>;
   scanProductIngredients: (ingredientsText: string) => Promise<void>;
   getUsersPastScans: () => Promise<void>;
+  getMostPopularProducts: () => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
@@ -53,6 +55,7 @@ export const useScanStore = create<ScanStore>((set) => ({
   isLoading: false,
   isFetching: false,
   pastScans: [],
+  popularScans: [],
   ingredientsProduct: null,
 
   scanProductBarcode: async (barcode) => {
@@ -95,6 +98,16 @@ export const useScanStore = create<ScanStore>((set) => ({
       toast.error("Error fetching past scans");
     } finally {
       set({ isFetching: false });
+    }
+  },
+
+  getMostPopularProducts: async () => {
+    try {
+      const res = await axiosInstance.get("/scan/popular");
+      set({ popularScans: res.data });
+    } catch (error: any) {
+      console.error(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   },
 }));

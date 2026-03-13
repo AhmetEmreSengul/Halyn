@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useScanStore } from "../store/useScanStore";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import ProductCard from "../components/ProductCard";
@@ -12,6 +12,8 @@ const LandingPage = () => {
     isLoading,
     product,
     ingredientsProduct,
+    popularScans,
+    getMostPopularProducts,
   } = useScanStore();
 
   const [barcode, setBarcode] = useState("");
@@ -31,10 +33,14 @@ const LandingPage = () => {
     setIngredientsText("");
   };
 
-  console.log(ingredientsProduct);
+  useEffect(() => {
+    getMostPopularProducts();
+  }, []);
+
+  console.log(popularScans);
 
   return (
-    <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-40">
+    <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
       <h1 className="text-4xl font-bold">Scan Barcode</h1>
       <div className="max-w-lg h-35">
         <Scanner
@@ -77,6 +83,19 @@ const LandingPage = () => {
       {ingredientsProduct && (
         <IngredientScanCard ingredientProduct={ingredientsProduct} />
       )}
+
+      <div>
+        {popularScans.length > 0 && (
+          <div className="flex flex-col items-center justify-center gap-5 mt-30">
+            <h1 className="text-4xl font-bold">Popular Scans</h1>
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
+              {popularScans.map((product) => (
+                <ProductCard product={product} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
