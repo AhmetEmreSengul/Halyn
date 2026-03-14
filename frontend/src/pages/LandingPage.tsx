@@ -43,17 +43,13 @@ const LandingPage = () => {
     getMostPopularProducts();
   }, []);
 
-  console.log(product);
-
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
       <h1 className="text-4xl font-bold">Scan Barcode</h1>
-      <div className="max-w-lg h-35">
+      <div className="max-w-lg container h-35 rounded-xl overflow-hidden">
         <Scanner
           formats={["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"]}
-          onScan={(result) =>
-            console.log(result.map((r) => scanProductBarcode(r.rawValue)))
-          }
+          onScan={(result) => result.map((r) => scanProductBarcode(r.rawValue))}
         />
       </div>
       <h1>You can manually enter a barcode or an ingredient.</h1>

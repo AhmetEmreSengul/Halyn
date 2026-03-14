@@ -13,6 +13,7 @@ export interface Product {
   halalStatus: HalalStatus;
   confidenceScore: number;
   analysisReasons: string[];
+  reasonExplanation: string[];
   source: "openfoodfacts";
   rawSourceData?: {
     completeness: number;
@@ -34,6 +35,7 @@ export interface IngredientProduct {
   confidenceScore: number;
   source: "openfoodfacts" | "user_scan";
   analysisReasons: string[];
+  reasonExplanation: string[];
 }
 
 interface ScanStore {

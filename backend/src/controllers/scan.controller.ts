@@ -75,7 +75,7 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     const normalizedIngredientsText = normalizeText(ingredientsText);
 
-    const analysis =  analyzeIngredients(normalizedIngredientsText);
+    const analysis = analyzeIngredients(normalizedIngredientsText);
 
     const newProduct = await Product.create({
       barcode,
@@ -86,6 +86,7 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       halalStatus: analysis.status,
       confidenceScore: analysis.confidence,
       analysisReasons: analysis.reasons,
+      reasonExplanation: analysis.flaggedIngredients.map((f) => f.reason),
       source: "openfoodfacts",
       rawSourceData: {
         completeness: productData.completeness,
@@ -137,6 +138,7 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
       halalStatus: analysis.status,
       confidenceScore: analysis.confidence,
       analysisReasons: analysis.reasons,
+      reasonExplanation: analysis.flaggedIngredients.map((f) => f.reason),
       source: "user_scan",
     });
   } catch (error) {

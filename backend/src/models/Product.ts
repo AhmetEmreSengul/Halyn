@@ -14,6 +14,7 @@ export interface IProduct {
   confidenceScore: number;
 
   analysisReasons: string[];
+  reasonExplanation: string[];
 
   source: "openfoodfacts";
 
@@ -54,6 +55,11 @@ const productSchema = new Schema<IProduct>(
     },
 
     analysisReasons: {
+      type: [String],
+      default: [],
+    },
+
+    reasonExplanation: {
       type: [String],
       default: [],
     },

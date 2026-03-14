@@ -26,7 +26,7 @@ const App = () => {
   }
 
   return (
-    <div className="bg-black w-screen min-h-screen text-white">
+    <div className="bg-black w-screen min-h-screen text-white flex justify-center">
       <Toaster position="top-center" />
       <Navbar />
       <Routes>
