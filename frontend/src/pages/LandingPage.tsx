@@ -57,24 +57,28 @@ const LandingPage = () => {
         <form onSubmit={handleScanSubmit} className="flex flex-col gap-2">
           <input
             placeholder="ex: 3017624010701"
-            className="p-2 rounded-lg border"
+            className="border-2 p-2 rounded-lg hover:border-stone-500 transition "
             type="text"
             value={barcode}
             onChange={(e) => setBarcode(e.target.value)}
             required
           />
-          <button className="p-2 rounded-lg border">Scan Barcode</button>
+          <button className="p-2 rounded-lg bg-stone-500 hover:bg-stone-600 transition cursor-pointer">
+            Scan Barcode
+          </button>
         </form>
         <form className="flex flex-col gap-2" onSubmit={handleIngredientSubmit}>
           <input
             placeholder="ex: pork wine"
             type="text"
-            className="border p-2 rounded-lg"
+            className="border-2 p-2 rounded-lg hover:border-stone-500 transition "
             value={ingredientsText}
             onChange={(e) => setIngredientsText(e.target.value)}
             required
           />
-          <button className="p-2 rounded-lg border">Scan Ingredient</button>
+          <button className="p-2 rounded-lg bg-stone-500 hover:bg-stone-600 transition cursor-pointer">
+            Scan Ingredient
+          </button>
         </form>
       </div>
 

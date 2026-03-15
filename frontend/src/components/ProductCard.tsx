@@ -52,31 +52,28 @@ const ProductCard = ({ product }: { product: Product }) => {
   const dashOffset = circumference - (confidence / 100) * circumference;
   return (
     <div className="px-8 py-4">
-      <div className="w-full md:w-105 bg-stone-50 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
+      <div className="w-full md:w-105 bg-green-100 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
         <div className="px-7 pt-7 pb-5 border-b border-stone-200">
           <div className="flex items-center justify-between gap-1.5 mb-3">
             <div>
               <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-              <span className="text-xs font-extralight tracking-widest uppercase text-stone-400 font-sans">
+              <span className="text-xs font-extralight tracking-widest uppercase text-stone-600 font-sans">
                 Source <span className="font-bold">{product.source}</span>
               </span>
             </div>
-            <p className="text-xs  text-stone-400">
+            <p className="text-xs  text-stone-700">
               Scanned
               <span className="font-extrabold mx-1">{product.scanCount}</span>
               times
             </p>
           </div>
-          <h2
-            className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word"
-            style={{ fontFamily: "'Georgia', serif" }}
-          >
+          <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word font-serif">
             {product.name}
           </h2>
           {product.brand && (
-            <p className="text-sm text-stone-500 font-sans">{product.brand}</p>
+            <p className="text-sm text-stone-900 font-sans">{product.brand}</p>
           )}
-          <p className="text-xs tracking-widest text-stone-300 mt-2 font-sans">
+          <p className="text-xs tracking-widest text-stone-600 mt-2 ">
             {product.barcode}
           </p>
         </div>
@@ -92,12 +89,11 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
             <div>
               <p
-                className={`text-xl font-bold ${s.label_color} leading-none mb-0.5`}
-                style={{ fontFamily: "'Georgia', serif" }}
+                className={`text-xl font-bold ${s.label_color} leading-none mb-0.5 font-serif`}
               >
                 {s.label}
               </p>
-              <p className="text-[11px] text-stone-400 tracking-wide font-sans uppercase">
+              <p className="text-[11px] text-stone-600 tracking-wide font-sans uppercase">
                 Halal Status
               </p>
             </div>
@@ -186,7 +182,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             <h1 className="text-[10px] font-semibold tracking-widest uppercase text-stone-400 mb-3 font-sans">
               Explanation
             </h1>
-            <p className="font-light text-sm text-gray-400">
+            <p className="font-light text-sm text-gray-900">
               No explanation for this scan.
             </p>
           </div>

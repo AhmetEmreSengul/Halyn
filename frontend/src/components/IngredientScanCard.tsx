@@ -13,7 +13,7 @@ const IngredientScanCard = ({
 
   return (
     <div className="px-8 py-4">
-      <div className="w-full md:w-105 bg-stone-50 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
+      <div className="w-full md:w-105 bg-green-100 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
         <div className="px-7 pt-7 pb-5 border-b border-stone-200">
           <div className="flex items-center gap-1.5 mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
