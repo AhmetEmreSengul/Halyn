@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
@@ -18,7 +18,7 @@ const Login = () => {
     window.location.href = `${BASE_URL}/auth/google`;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: ChangeEvent) => {
     e.preventDefault();
     login(formData);
     navigate("/");
@@ -39,6 +39,7 @@ const Login = () => {
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
+            required
           />
           <input
             className="p-4 w-full border rounded-lg"
@@ -47,6 +48,7 @@ const Login = () => {
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
+            required
           />
         </div>
         <button

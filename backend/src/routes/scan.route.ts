@@ -17,6 +17,6 @@ router.use(arcjetProtection);
 router.post("/barcode", scanProductBarcode);
 router.post("/ingredients", scanIngredientsText);
 router.get("/past-scans", protectRoute, getUsersPastScans);
-router.get("/popular", protectRoute, getMostPopularProducts);
+router.get("/popular", getMostPopularProducts);
 
 export default router;

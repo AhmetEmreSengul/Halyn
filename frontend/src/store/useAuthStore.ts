@@ -44,7 +44,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ authUser: res.data });
     } catch (error: any) {
       console.error(error.response.data.message);
-      toast.error(error.response.data.message);
     } finally {
       set({ isCheckingAuth: false });
     }
