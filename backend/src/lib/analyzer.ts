@@ -1,8 +1,8 @@
 export type HalalStatus = "halal" | "haram" | "doubtful" | "unknown";
 
 export interface FlaggedIngredient {
-  matched: string; // what was found in the text
-  keyword: string; // which rule keyword triggered
+  matched: string;
+  keyword: string;
   status: "haram" | "doubtful";
   reason: string;
   eNumber?: string;
@@ -10,7 +10,14 @@ export interface FlaggedIngredient {
 
 export interface IngredientAnalysis {
   status: HalalStatus;
-  confidence: number;
+
+  verdictTier:
+    | "certified-safe"
+    | "contains-haram"
+    | "needs-verification"
+    | "unverified"
+    | "unknown";
+  verdictNote: string;
   reasons: string[];
   flaggedIngredients: FlaggedIngredient[];
   isValidIngredientList: boolean;
@@ -22,9 +29,7 @@ interface Rule {
   status: "haram" | "doubtful";
   reason: string;
   eNumber?: string;
-  // If these strings appear near the keyword, the rule is negated (context override)
   halalOverrideContext?: string[];
-  // If these strings appear near the keyword, severity is upgraded to haram
   haramUpgradeContext?: string[];
 }
 
@@ -88,7 +93,7 @@ const RULES: Rule[] = [
     eNumber: "E441",
   },
   {
-    keywords: ["pork fat", "domuz yağı", "lard"],
+    keywords: ["pork fat", "domuz yağı"],
     status: "haram",
     reason: "Contains pork fat",
   },
@@ -121,11 +126,21 @@ const RULES: Rule[] = [
       "cochineal",
       "karmin",
       "ci 75470",
+      "carminic acid",
+      "crimson lake",
+      "natural red 4",
     ],
     status: "haram",
     reason: "Carmine (E120) is derived from insects",
     eNumber: "E120",
   },
+  {
+    keywords: ["e904", "e-904", "e 904", "shellac"],
+    status: "haram",
+    reason: "E904 (Shellac) is an insect-derived resin",
+    eNumber: "E904",
+  },
+
   {
     keywords: ["e441", "e-441", "e 441"],
     status: "haram",
@@ -144,12 +159,7 @@ const RULES: Rule[] = [
     reason: "E542 is derived from animal bones, often porcine",
     eNumber: "E542",
   },
-  {
-    keywords: ["e904", "e-904", "e 904", "shellac"],
-    status: "haram",
-    reason: "E904 (Shellac) is an insect-derived resin",
-    eNumber: "E904",
-  },
+
   {
     keywords: ["e910", "e-910", "e 910", "l-cysteine", "l cysteine", "sistein"],
     status: "doubtful",
@@ -161,15 +171,8 @@ const RULES: Rule[] = [
     keywords: ["e966", "e-966", "e 966", "lactitol"],
     status: "doubtful",
     reason:
-      "Lactitol (E966) is dairy-derived — generally halal but source should be confirmed",
+      "Lactitol (E966) is dairy-derived — generally considered halal but source should be confirmed",
     eNumber: "E966",
-  },
-
-  {
-    keywords: ["e120", "e-120", "e 120"],
-    status: "haram",
-    reason: "Carmine — insect derived",
-    eNumber: "E120",
   },
   {
     keywords: [
@@ -212,9 +215,15 @@ const RULES: Rule[] = [
       "e471",
       "e-471",
       "e 471",
+      // FIX #8: added E472 sub-variants
       "e472",
       "e-472",
       "e 472",
+      "e472a",
+      "e472b",
+      "e472c",
+      "e472d",
+      "e472e",
       "mono and diglycerides",
       "mono- and diglycerides",
       "monoglycerides",
@@ -222,7 +231,7 @@ const RULES: Rule[] = [
       "mono ve digliseridler",
     ],
     status: "doubtful",
-    reason: "Mono/diglycerides (E471/E472) can be animal or plant-derived",
+    reason: "Mono/diglycerides (E470–E472) can be animal or plant-derived",
     eNumber: "E471",
     halalOverrideContext: [
       "vegetable",
@@ -253,6 +262,14 @@ const RULES: Rule[] = [
   },
 
   {
+    keywords: ["e903", "e-903", "e 903", "carnauba wax", "carnauba"],
+    status: "doubtful",
+    reason:
+      "Carnauba wax (E903) is plant-derived but may be processed with animal-derived solvents — verify source",
+    eNumber: "E903",
+  },
+
+  {
     keywords: [
       "natural flavor",
       "natural flavors",
@@ -278,7 +295,15 @@ const RULES: Rule[] = [
   },
 
   {
-    keywords: ["rennet", "maya", "animal rennet"],
+    keywords: ["vanilla extract", "vanilya ekstresi"],
+    status: "doubtful",
+    reason:
+      "Vanilla extract typically uses an alcohol carrier — halal status depends on production method",
+    halalOverrideContext: ["alcohol-free", "non-alcoholic", "halal"],
+  },
+
+  {
+    keywords: ["rennet", "animal rennet"],
     status: "doubtful",
     reason:
       "Rennet source unspecified — animal rennet requires halal slaughter",
@@ -306,17 +331,18 @@ const RULES: Rule[] = [
   },
 
   {
-    keywords: ["carminic acid", "crimson lake", "natural red 4"],
-    status: "haram",
-    reason: "Carminic acid is insect-derived (same source as E120/Carmine)",
-    eNumber: "E120",
-  },
-
-  {
     keywords: ["enzymes", "enzimler", "lipase", "protease", "amylase"],
     status: "doubtful",
     reason: "Enzymes — may be animal-derived depending on source",
     halalOverrideContext: ["microbial", "fungal", "vegetable", "bitkisel"],
+  },
+
+  {
+    keywords: ["pepsin"],
+    status: "doubtful",
+    reason:
+      "Pepsin is a gastric enzyme commonly derived from porcine sources — source must be verified",
+    haramUpgradeContext: ["pork", "porcine", "pig"],
   },
 
   {
@@ -331,6 +357,29 @@ const RULES: Rule[] = [
     status: "doubtful",
     reason:
       "Isinglass is fish-derived — halal by source but processing concerns",
+  },
+
+  {
+    keywords: ["whey", "peynir altı suyu"],
+    status: "doubtful",
+    reason:
+      "Whey is dairy-derived — generally halal but source and rennet used in processing should be confirmed",
+    halalOverrideContext: ["halal certified", "halal"],
+  },
+  {
+    keywords: ["casein", "kazein", "caseinate"],
+    status: "doubtful",
+    reason:
+      "Casein is dairy-derived — generally halal but source should be confirmed",
+    halalOverrideContext: ["halal certified", "halal"],
+  },
+
+  {
+    keywords: ["l-carnitine", "l carnitine", "carnitine"],
+    status: "doubtful",
+    reason:
+      "L-Carnitine can be derived from animal muscle tissue — verify source is plant-based or synthetic",
+    halalOverrideContext: ["synthetic", "plant", "vegetable", "fermentation"],
   },
 ];
 
@@ -383,23 +432,23 @@ const INGREDIENT_SIGNAL_WORDS = [
   "soya",
   "kakao",
   "vanilin",
-  // E-numbers pattern handled separately
 ];
 
 const E_NUMBER_PATTERN = /\be-?\d{3,4}[a-z]?\b/i;
 const PERCENTAGE_PATTERN = /\d+(\.\d+)?%/;
 const SEPARATOR_PATTERN = /[,;]/;
 
+const PROSE_STARTERS = /^(the|this|i |we |it |our |my |these|those|a |an )/i;
+const QUESTION_MARK_PATTERN = /\?/;
+
 const ALL_RULE_KEYWORDS: string[] = RULES.flatMap((r) => r.keywords);
 
 function isKnownIngredient(lower: string): boolean {
   return ALL_RULE_KEYWORDS.some((kw) => {
     const kwLower = kw.toLowerCase();
-
     if (!kwLower.includes(" ")) {
       return new RegExp(`\\b${kwLower}\\b`).test(lower);
     }
-
     return lower.includes(kwLower);
   });
 }
@@ -414,13 +463,11 @@ function isValidIngredientList(text: string): {
     return { valid: false, message: "Input is too short." };
   }
 
-  const wordCount = lower.split(/\s+/).length;
-  const sentenceCount = (lower.match(/[.!?]/g) || []).length;
-  if (sentenceCount >= 3 && wordCount / sentenceCount < 8) {
+  if (QUESTION_MARK_PATTERN.test(lower) || PROSE_STARTERS.test(lower)) {
     return {
       valid: false,
       message:
-        "This looks like a sentence or paragraph, not an ingredient list.",
+        "This looks like a sentence or question, not an ingredient list.",
     };
   }
 
@@ -478,16 +525,46 @@ function levenshtein(a: string, b: string): number {
   return dp[a.length][b.length];
 }
 
-function fuzzyMatch(word: string, keyword: string): boolean {
+function fuzzyMatch(token: string, keyword: string): boolean {
   if (keyword.includes(" ")) {
-    return word.includes(keyword);
+    return token.includes(keyword);
   }
-  if (keyword.length <= 5) {
-    return word === keyword || word.includes(keyword);
+
+  if (keyword.length <= 6) {
+    return token === keyword || token.includes(keyword);
   }
 
   const maxDist = keyword.length <= 8 ? 1 : 2;
-  return levenshtein(word, keyword) <= maxDist || word.includes(keyword);
+  return levenshtein(token, keyword) <= maxDist || token.includes(keyword);
+}
+
+interface Token {
+  text: string;
+  index: number; // position in the lowercased source string
+}
+
+function tokenize(lower: string): Token[] {
+  const tokens: Token[] = [];
+
+  const delimPattern = /[,;()[\]/\n]/g;
+  let lastEnd = 0;
+
+  const pushSegment = (segment: string, offset: number) => {
+    const trimmed = segment.trim();
+    if (trimmed.length > 1) {
+      const innerOffset = segment.indexOf(trimmed);
+      tokens.push({ text: trimmed, index: offset + innerOffset });
+    }
+  };
+
+  let match: RegExpExecArray | null;
+  while ((match = delimPattern.exec(lower)) !== null) {
+    pushSegment(lower.slice(lastEnd, match.index), lastEnd);
+    lastEnd = match.index + 1;
+  }
+  pushSegment(lower.slice(lastEnd), lastEnd);
+
+  return tokens;
 }
 
 export function analyzeIngredients(rawText: string): IngredientAnalysis {
@@ -500,43 +577,51 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
       isValidIngredientList: false,
       validationMessage: validation.message,
       status: "unknown",
-      confidence: 0,
+      verdictTier: "unknown",
+      verdictNote:
+        "Could not analyse — input does not appear to be an ingredient list.",
       reasons: [],
       flaggedIngredients: [],
     };
   }
 
-  const tokens = lower
-    .split(/[,;()[\]\/\n]/)
-    .map((t) => t.trim())
-    .filter((t) => t.length > 1);
+  const tokens = tokenize(lower);
 
   const flagged: FlaggedIngredient[] = [];
-  const seenKeywords = new Set<string>();
+
+  const consumedRanges: Array<[number, number]> = [];
+
+  function isOverlappingConsumed(index: number, length: number): boolean {
+    const end = index + length;
+    return consumedRanges.some(([cs, ce]) => index < ce && end > cs);
+  }
 
   for (const rule of RULES) {
     for (const keyword of rule.keywords) {
-      if (seenKeywords.has(keyword)) continue;
-
       const keywordLower = keyword.toLowerCase();
-      const matchIndex = lower.indexOf(keywordLower);
+      const directIndex = lower.indexOf(keywordLower);
 
       let matched: string | null = null;
-      if (matchIndex !== -1) {
+      let matchIndex = -1;
+
+      if (directIndex !== -1) {
         matched = keyword;
+        matchIndex = directIndex;
       } else {
         for (const token of tokens) {
-          if (fuzzyMatch(token, keywordLower)) {
-            matched = token;
+          if (fuzzyMatch(token.text, keywordLower)) {
+            matched = token.text;
+            matchIndex = token.index;
             break;
           }
         }
       }
 
-      if (!matched) continue;
+      if (!matched || matchIndex === -1) continue;
 
-      const idx = matchIndex !== -1 ? matchIndex : lower.indexOf(matched);
-      const context = getContextWindow(lower, idx);
+      if (isOverlappingConsumed(matchIndex, matched.length)) continue;
+
+      const context = getContextWindow(lower, matchIndex, 60);
 
       let effectiveStatus = rule.status;
 
@@ -546,7 +631,7 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
         effectiveStatus === "doubtful" &&
         rule.halalOverrideContext?.some((ctx) => context.includes(ctx))
       ) {
-        seenKeywords.add(keyword);
+        consumedRanges.push([matchIndex, matchIndex + matched.length]);
         continue;
       }
 
@@ -558,7 +643,7 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
         eNumber: rule.eNumber,
       });
 
-      seenKeywords.add(keyword);
+      consumedRanges.push([matchIndex, matchIndex + matched.length]);
 
       break;
     }
@@ -568,21 +653,37 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
   const doubtfulItems = flagged.filter((f) => f.status === "doubtful");
 
   let status: HalalStatus;
-  let confidence: number;
 
   if (haramItems.length > 0) {
     status = "haram";
-
-    confidence = Math.min(95, 75 + haramItems.length * 5);
   } else if (doubtfulItems.length > 0) {
     status = "doubtful";
-
-    confidence = Math.max(40, 70 - doubtfulItems.length * 5);
   } else {
     status = "halal";
+  }
 
-    const isSingleIngredient = tokens.length <= 1 && isKnownIngredient(lower);
-    confidence = isSingleIngredient ? 85 : tokens.length > 5 ? 70 : 55;
+  type VerdictTier = IngredientAnalysis["verdictTier"];
+  let verdictTier: VerdictTier;
+  let verdictNote: string;
+
+  const isSingleKnownSafeIngredient =
+    tokens.length <= 1 &&
+    (isKnownIngredient(lower) ||
+      INGREDIENT_SIGNAL_WORDS.some((w) => lower.includes(w)));
+
+  if (status === "haram") {
+    verdictTier = "contains-haram";
+    verdictNote =
+      "One or more ingredients are considered haram under Islamic dietary law.";
+  } else if (status === "doubtful") {
+    verdictTier = "needs-verification";
+    verdictNote =
+      "One or more ingredients require further verification. Check for halal certification or contact the manufacturer.";
+  } else {
+    verdictTier = isSingleKnownSafeIngredient ? "certified-safe" : "unverified";
+    verdictNote = isSingleKnownSafeIngredient
+      ? "No known haram ingredients detected."
+      : "No known haram or doubtful ingredients detected, but halal status cannot be fully guaranteed without official certification.";
   }
 
   const reasons: string[] = [];
@@ -607,7 +708,8 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
   return {
     isValidIngredientList: true,
     status,
-    confidence,
+    verdictTier,
+    verdictNote,
     reasons,
     flaggedIngredients: flagged,
   };
