@@ -43,6 +43,8 @@ const LandingPage = () => {
     getMostPopularProducts();
   }, []);
 
+  console.log(product);
+
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
       <h1 className="text-4xl font-bold">Scan Barcode</h1>

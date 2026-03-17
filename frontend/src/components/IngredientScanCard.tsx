@@ -7,9 +7,6 @@ const IngredientScanCard = ({
   ingredientProduct: IngredientProduct;
 }) => {
   const s = statusConfig[ingredientProduct.halalStatus] ?? statusConfig.unknown;
-  const confidence = Math.round(ingredientProduct.confidenceScore);
-  const circumference = 2 * Math.PI * 28;
-  const dashOffset = circumference - (confidence / 100) * circumference;
 
   return (
     <div className="px-8 py-4">
@@ -47,43 +44,6 @@ const IngredientScanCard = ({
               <p className="text-[11px] text-stone-400 tracking-wide font-sans uppercase">
                 Halal Status
               </p>
-            </div>
-          </div>
-
-          <div className="relative w-16 h-16 shrink-0">
-            <svg
-              width="64"
-              height="64"
-              viewBox="0 0 64 64"
-              style={{ transform: "rotate(-90deg)" }}
-            >
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                fill="none"
-                stroke="#e7e5e4"
-                strokeWidth="5"
-              />
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                fill="none"
-                stroke={s.stroke}
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={dashOffset}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-base font-bold text-stone-800 leading-none font-sans">
-                {confidence}
-              </span>
-              <span className="text-[8px] text-stone-400 tracking-wider font-sans uppercase mt-0.5">
-                Conf.
-              </span>
             </div>
           </div>
         </div>

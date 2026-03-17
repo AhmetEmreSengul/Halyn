@@ -11,7 +11,6 @@ export interface IProduct {
   ingredientsList: string[];
 
   halalStatus: HalalStatus;
-  confidenceScore: number;
 
   analysisReasons: string[];
   reasonExplanation: string[];
@@ -44,13 +43,6 @@ const productSchema = new Schema<IProduct>(
     halalStatus: {
       type: String,
       enum: ["halal", "haram", "doubtful", "unknown"],
-      required: true,
-    },
-
-    confidenceScore: {
-      type: Number,
-      min: 0,
-      max: 100,
       required: true,
     },
 

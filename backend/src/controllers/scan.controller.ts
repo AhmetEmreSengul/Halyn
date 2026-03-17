@@ -84,7 +84,6 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       ingredientsText,
       ingredientsList,
       halalStatus: analysis.status,
-      confidenceScore: analysis.confidence,
       analysisReasons: analysis.reasons,
       reasonExplanation: analysis.flaggedIngredients.map((f) => f.reason),
       source: "openfoodfacts",
@@ -136,7 +135,6 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
     return res.json({
       ingredientsText,
       halalStatus: analysis.status,
-      confidenceScore: analysis.confidence,
       analysisReasons: analysis.reasons,
       reasonExplanation: analysis.flaggedIngredients.map((f) => f.reason),
       source: "user_scan",

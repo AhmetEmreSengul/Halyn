@@ -10,7 +10,6 @@ export const statusConfig = {
     iconRing: "ring-green-100",
     label_color: "text-green-600",
     bullet: "bg-green-400",
-    stroke: "#22c55e",
   },
   haram: {
     label: "Haram",
@@ -20,7 +19,6 @@ export const statusConfig = {
     iconRing: "ring-red-100",
     label_color: "text-red-600",
     bullet: "bg-red-400",
-    stroke: "#ef4444",
   },
   doubtful: {
     label: "Doubtful",
@@ -30,7 +28,6 @@ export const statusConfig = {
     iconRing: "ring-amber-100",
     label_color: "text-amber-500",
     bullet: "bg-amber-400",
-    stroke: "#f59e0b",
   },
   unknown: {
     label: "Unknown",
@@ -40,16 +37,13 @@ export const statusConfig = {
     iconRing: "ring-slate-100",
     label_color: "text-slate-500",
     bullet: "bg-slate-300",
-    stroke: "#94a3b8",
   },
 };
 
 const ProductCard = ({ product }: { product: Product }) => {
   const [showIngredients, setShowIngredients] = useState(false);
   const s = statusConfig[product.halalStatus] ?? statusConfig.unknown;
-  const confidence = Math.round(product.confidenceScore);
-  const circumference = 2 * Math.PI * 28;
-  const dashOffset = circumference - (confidence / 100) * circumference;
+
   return (
     <div className="px-8 py-4">
       <div className="w-full md:w-105 bg-green-100 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
@@ -96,46 +90,6 @@ const ProductCard = ({ product }: { product: Product }) => {
               <p className="text-[11px] text-stone-600 tracking-wide font-sans uppercase">
                 Halal Status
               </p>
-            </div>
-          </div>
-
-          <div className="relative w-16 h-16 shrink-0">
-            <svg
-              width="64"
-              height="64"
-              viewBox="0 0 64 64"
-              style={{ transform: "rotate(-90deg)" }}
-            >
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                fill="none"
-                stroke="#e7e5e4"
-                strokeWidth="5"
-              />
-              <circle
-                cx="32"
-                cy="32"
-                r="28"
-                fill="none"
-                stroke={s.stroke}
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={dashOffset}
-              />
-            </svg>
-            <div
-              className="absolute inset-0 flex flex-col items-center justify-center"
-              title="Confidence Score"
-            >
-              <span className="text-base font-bold text-stone-800 leading-none font-sans">
-                {confidence}
-              </span>
-              <span className="text-[8px] text-stone-400 tracking-wider font-sans uppercase mt-0.5">
-                Conf.
-              </span>
             </div>
           </div>
         </div>

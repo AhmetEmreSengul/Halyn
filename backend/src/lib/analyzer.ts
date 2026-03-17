@@ -10,14 +10,6 @@ export interface FlaggedIngredient {
 
 export interface IngredientAnalysis {
   status: HalalStatus;
-
-  verdictTier:
-    | "certified-safe"
-    | "contains-haram"
-    | "needs-verification"
-    | "unverified"
-    | "unknown";
-  verdictNote: string;
   reasons: string[];
   flaggedIngredients: FlaggedIngredient[];
   isValidIngredientList: boolean;
@@ -577,9 +569,6 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
       isValidIngredientList: false,
       validationMessage: validation.message,
       status: "unknown",
-      verdictTier: "unknown",
-      verdictNote:
-        "Could not analyse — input does not appear to be an ingredient list.",
       reasons: [],
       flaggedIngredients: [],
     };
@@ -662,29 +651,10 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
     status = "halal";
   }
 
-  type VerdictTier = IngredientAnalysis["verdictTier"];
-  let verdictTier: VerdictTier;
-  let verdictNote: string;
-
   const isSingleKnownSafeIngredient =
     tokens.length <= 1 &&
     (isKnownIngredient(lower) ||
       INGREDIENT_SIGNAL_WORDS.some((w) => lower.includes(w)));
-
-  if (status === "haram") {
-    verdictTier = "contains-haram";
-    verdictNote =
-      "One or more ingredients are considered haram under Islamic dietary law.";
-  } else if (status === "doubtful") {
-    verdictTier = "needs-verification";
-    verdictNote =
-      "One or more ingredients require further verification. Check for halal certification or contact the manufacturer.";
-  } else {
-    verdictTier = isSingleKnownSafeIngredient ? "certified-safe" : "unverified";
-    verdictNote = isSingleKnownSafeIngredient
-      ? "No known haram ingredients detected."
-      : "No known haram or doubtful ingredients detected, but halal status cannot be fully guaranteed without official certification.";
-  }
 
   const reasons: string[] = [];
 
@@ -708,8 +678,6 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
   return {
     isValidIngredientList: true,
     status,
-    verdictTier,
-    verdictNote,
     reasons,
     flaggedIngredients: flagged,
   };
