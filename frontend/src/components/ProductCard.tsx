@@ -98,19 +98,25 @@ const ProductCard = ({ product }: { product: Product }) => {
           <p className="text-[10px] font-semibold tracking-widest uppercase text-stone-400 mb-3 font-sans">
             Analysis
           </p>
-          <ul className="space-y-2.5">
-            {product.analysisReasons.map((reason, i) => (
-              <li
-                key={i}
-                className="flex items-start gap-2.5 text-[13px] text-stone-700 leading-relaxed font-sans"
-              >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${s.bullet} shrink-0 mt-1.5 opacity-70`}
-                />
-                {reason}
-              </li>
-            ))}
-          </ul>
+          {product.analysisReasons.length > 0 ? (
+            <ul className="space-y-2.5">
+              {product.analysisReasons.map((reason, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2.5 text-[13px] text-stone-700 leading-relaxed font-sans"
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${s.bullet} shrink-0 mt-1.5 opacity-70`}
+                  />
+                  {reason}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="font-light text-sm text-gray-700">
+              No analysis available for this scan.
+            </p>
+          )}
         </div>
         {product.reasonExplanation.length > 0 ? (
           <div className="px-7 py-5 border-b border-stone-200">
@@ -136,8 +142,8 @@ const ProductCard = ({ product }: { product: Product }) => {
             <h1 className="text-[10px] font-semibold tracking-widest uppercase text-stone-400 mb-3 font-sans">
               Explanation
             </h1>
-            <p className="font-light text-sm text-gray-900">
-              No explanation for this scan.
+            <p className="font-light text-sm text-gray-700">
+              No explanation available for this scan.
             </p>
           </div>
         )}
