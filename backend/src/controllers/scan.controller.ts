@@ -32,7 +32,10 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       });
     }
 
-    const existingScan = await ScanHistory.findOne({ barcode });
+    const existingScan = await ScanHistory.findOne({
+      barcode,
+      userId: (req.user as any)._id,
+    });
 
     const existingProduct = await Product.findOne({ barcode });
     if (existingProduct) {
