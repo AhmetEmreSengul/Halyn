@@ -65,7 +65,7 @@ const LandingPage = () => {
             onChange={(e) => setBarcode(e.target.value)}
             required
           />
-          <button className="p-2 rounded-lg bg-stone-500 hover:bg-stone-600 transition cursor-pointer">
+          <button className="p-2 rounded-lg bg-stone-300 hover:bg-stone-500 text-black hover:text-white transition cursor-pointer">
             Scan Barcode
           </button>
         </form>
@@ -78,7 +78,7 @@ const LandingPage = () => {
             onChange={(e) => setIngredientsText(e.target.value)}
             required
           />
-          <button className="p-2 rounded-lg bg-stone-500 hover:bg-stone-600 transition cursor-pointer">
+          <button className="p-2 rounded-lg bg-stone-300 hover:bg-stone-500 text-black hover:text-white transition cursor-pointer">
             Scan Ingredient
           </button>
         </form>
