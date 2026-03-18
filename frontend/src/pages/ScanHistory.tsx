@@ -10,10 +10,10 @@ const ScanHistory = () => {
     getUsersPastScans();
   }, []);
 
-  if (isFetching) {
+  if (!isFetching) {
     return (
       <div className="min-h-screen w-screen py-30 block md:flex items-center justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 p-2">
           {[1, 2, 3].map((i) => (
             <div key={i}>
               <LoadingSkeleton />

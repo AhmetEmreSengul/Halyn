@@ -23,7 +23,7 @@ const GoogleSuccess = () => {
   }, [checkAuth, navigate]);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center ">
+    <div className="w-screen h-screen flex items-center justify-center bg-emerald-600 text-white">
       <AiOutlineLoading3Quarters className="animate-spin size-10" />
     </div>
   );

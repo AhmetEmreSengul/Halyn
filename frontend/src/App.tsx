@@ -19,7 +19,7 @@ const App = () => {
 
   if (isCheckingAuth) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-bg-primary text-text-primary">
+      <div className="h-screen w-screen bg-emerald-600 text-white flex items-center justify-center bg-bg-primary text-text-primary">
         <AiOutlineLoading3Quarters className="size-10" />
       </div>
     );
