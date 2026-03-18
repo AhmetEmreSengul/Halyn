@@ -34,7 +34,7 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     const existingScan = await ScanHistory.findOne({
       barcode,
-      userId : req.user ? (req.user as any)._id : null
+      userId: req.user ? (req.user as any)._id : null,
     });
 
     const existingProduct = await Product.findOne({ barcode });
@@ -163,6 +163,23 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json(scans);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteScan = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const scan = await ScanHistory.findByIdAndDelete(id);
+
+    if (!scan) {
+      return res.status(404).json({ message: "Scan not found" });
+    }
+
+    return res.status(200).json({ message: "Scan deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

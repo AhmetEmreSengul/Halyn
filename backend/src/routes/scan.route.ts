@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteScan,
   getMostPopularProducts,
   getUsersPastScans,
   scanIngredientsText,
@@ -18,5 +19,6 @@ router.post("/barcode", scanProductBarcode);
 router.post("/ingredients", scanIngredientsText);
 router.get("/past-scans", protectRoute, getUsersPastScans);
 router.get("/popular", getMostPopularProducts);
+router.delete("/delete-scan/:id", protectRoute, deleteScan);
 
 export default router;
