@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 export type HalalStatus = "halal" | "haram" | "doubtful" | "unknown";
 
 export interface Product {
+  _id: string;
   barcode: string;
   name: string;
   brand?: string;
@@ -50,6 +51,7 @@ interface ScanStore {
   scanProductIngredients: (ingredientsText: string) => Promise<void>;
   getUsersPastScans: () => Promise<void>;
   getMostPopularProducts: () => Promise<void>;
+  deleteScan: (id: string) => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
@@ -100,6 +102,19 @@ export const useScanStore = create<ScanStore>((set) => ({
       toast.error("Error fetching past scans");
     } finally {
       set({ isFetching: false });
+    }
+  },
+
+  deleteScan: async (id) => {
+    try {
+      await axiosInstance.delete(`/scan/delete-scan/${id}`);
+      set((state) => ({
+        pastScans: state.pastScans.filter((scan) => scan._id !== id),
+      }));
+      toast.success("Scan deleted.");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response.data.message);
     }
   },
 

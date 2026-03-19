@@ -40,9 +40,27 @@ export const statusConfig = {
   },
 };
 
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({
+  product,
+  showDelete,
+  deleteScan,
+  scanId,
+}: {
+  product: Product;
+  showDelete?: boolean;
+  deleteScan?: (id: string) => Promise<void>;
+  scanId?: string;
+}) => {
   const [showIngredients, setShowIngredients] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
   const s = statusConfig[product.halalStatus] ?? statusConfig.unknown;
+
+  const handleDelete = () => {
+    if (deleteScan && scanId) {
+      deleteScan(scanId);
+    }
+    setDeleteId("");
+  };
 
   return (
     <div className="px-8 py-4">
@@ -61,15 +79,30 @@ const ProductCard = ({ product }: { product: Product }) => {
               times
             </p>
           </div>
-          <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word font-serif">
-            {product.name}
-          </h2>
-          {product.brand && (
-            <p className="text-sm text-stone-900 font-sans">{product.brand}</p>
-          )}
-          <p className="text-xs tracking-widest text-stone-600 mt-2 ">
-            {product.barcode}
-          </p>
+          <div className="flex justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-stone-900">
+                {product.name}
+              </h2>
+              {product.brand && (
+                <p className="text-sm text-stone-900 font-sans">
+                  {product.brand}
+                </p>
+              )}
+              <p className="text-xs tracking-widest text-stone-600 mt-2 ">
+                {product.barcode}
+              </p>
+            </div>
+
+            {showDelete && (
+              <button
+                className="h-fit w-fit p-2 bg-red-400 hover:bg-red-500 transition rounded-lg cursor-pointer"
+                onClick={() => setDeleteId(scanId ?? "")}
+              >
+                Delete scan
+              </button>
+            )}
+          </div>
         </div>
 
         <div
@@ -173,6 +206,33 @@ const ProductCard = ({ product }: { product: Product }) => {
           </div>
         )}
       </div>
+
+      {scanId === deleteId && (
+        <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
+          <div className="w-full max-w-md p-2 text-center md:p-0">
+            <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
+              <p className="text-xl text-black leading-snug wrap-break-word">
+                Are you sure you want to delete this scan? This cannot be
+                undone.
+              </p>
+              <div className="flex gap-2.5">
+                <button
+                  onClick={() => setDeleteId("")}
+                  className="px-4 py-2.5 text-sm font-semibold hover:text-black rounded-lg border border-stone-200 hover:bg-stone-100 0 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-red-400 hover:bg-red-500 transition cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

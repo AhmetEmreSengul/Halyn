@@ -100,7 +100,11 @@ const LandingPage = () => {
             <h1 className="text-4xl font-bold">Popular Scans</h1>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
               {popularScans.map((product) => (
-                <ProductCard product={product} />
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  showDelete={false}
+                />
               ))}
             </div>
           </div>

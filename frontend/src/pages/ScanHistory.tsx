@@ -4,7 +4,8 @@ import ProductCard from "../components/ProductCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 
 const ScanHistory = () => {
-  const { getUsersPastScans, pastScans, isFetching } = useScanStore();
+  const { getUsersPastScans, deleteScan, pastScans, isFetching } =
+    useScanStore();
 
   useEffect(() => {
     getUsersPastScans();
@@ -38,7 +39,13 @@ const ScanHistory = () => {
     <div className="min-h-screen w-screen py-30 flex items-center justify-center">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
         {pastScans.map((scan) => (
-          <ProductCard product={scan.productId} />
+          <ProductCard
+            key={scan._id}
+            product={scan.productId}
+            showDelete={true}
+            deleteScan={deleteScan}
+            scanId={scan._id}
+          />
         ))}
       </div>
     </div>
