@@ -6,8 +6,9 @@ const Navbar = () => {
   const { authUser, logout } = useAuthStore();
 
   return (
-    <div className="fixed md:top-5 md:rounded-full w-screen md:w-5xl md:container h-25 md:h-17 bg-green-900/20 backdrop-blur-sm flex items-center justify-between px-5 md:px-26 z-10">
-      <Link to={"/"} className="font-bold text-3xl ">
+    <div className="fixed md:top-5 md:rounded-full w-screen md:w-5xl md:container h-25 md:h-17 bg-green-900/20 backdrop-blur-sm flex items-center justify-between px-5 md:px-20 z-10">
+      <Link to={"/"} className="font-bold text-3xl inline-flex items-center">
+        <img src="./halyn_logo.png" className="size-15" alt="" />
         Halyn
       </Link>
 
