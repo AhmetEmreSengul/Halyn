@@ -120,11 +120,14 @@ export const useScanStore = create<ScanStore>((set) => ({
 
   getMostPopularProducts: async () => {
     try {
+      set({ isFetching: true });
       const res = await axiosInstance.get("/scan/popular");
       set({ popularScans: res.data });
     } catch (error: any) {
       console.error(error.response.data.message);
       toast.error(error.response.data.message);
+    } finally {
+      set({ isFetching: false });
     }
   },
 }));

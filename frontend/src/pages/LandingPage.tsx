@@ -11,6 +11,7 @@ const LandingPage = () => {
     scanProductBarcode,
     scanProductIngredients,
     isLoading,
+    isFetching,
     product,
     ingredientsProduct,
     popularScans,
@@ -42,8 +43,6 @@ const LandingPage = () => {
   useEffect(() => {
     getMostPopularProducts();
   }, []);
-
-  console.log(product);
 
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
@@ -94,8 +93,20 @@ const LandingPage = () => {
         <IngredientScanCard ingredientProduct={ingredientsProduct} />
       )}
 
+      {isFetching && (
+        <div className="py-30 block md:flex items-center justify-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 p-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i}>
+                <LoadingSkeleton />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div>
-        {popularScans.length > 0 && (
+        {popularScans.length > 0 && !isFetching && (
           <div className="flex flex-col items-center justify-center gap-5 mt-30">
             <h1 className="text-4xl font-bold">Popular Scans</h1>
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
