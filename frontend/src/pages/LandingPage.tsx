@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useScanStore } from "../store/useScanStore";
-import { Scanner } from "@yudiel/react-qr-scanner";
-import ProductCard from "../components/ProductCard";
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import IngredientScanCard from "../components/IngredientScanCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
-import toast from "react-hot-toast";
+import ProductCard from "../components/ProductCard";
+import { useScanStore } from "../store/useScanStore";
 
 const LandingPage = () => {
   const {
-    scanProductBarcode,
-    scanProductIngredients,
     isLoading,
     isFetching,
     product,
     ingredientsProduct,
     popularScans,
     getMostPopularProducts,
+    scanProductBarcode,
+    scanProductIngredients,
   } = useScanStore();
 
   const [barcode, setBarcode] = useState("");
+  const isScannedRef = useRef(false);
   const [ingredientsText, setIngredientsText] = useState("");
 
   const handleScanSubmit = (e: React.SubmitEvent) => {
@@ -44,14 +45,35 @@ const LandingPage = () => {
     getMostPopularProducts();
   }, []);
 
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const codeReader = useRef(new BrowserMultiFormatReader());
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    const reader = codeReader.current;
+
+    reader.decodeFromVideoDevice(undefined, videoRef.current, (result, _) => {
+      if (result && !isScannedRef.current) {
+        isScannedRef.current = true;
+        scanProductBarcode(result.getText());
+
+        setTimeout(() => {
+          isScannedRef.current = false;
+        }, 2000);
+      }
+    });
+  }, []);
+
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
       <h1 className="text-4xl font-bold">Scan Barcode</h1>
-      <div className="max-w-lg container h-35 rounded-xl overflow-hidden">
-        <Scanner
-          formats={["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"]}
-          onScan={(result) => result.map((r) => scanProductBarcode(r.rawValue))}
-        />
+      <div className="max-w-lg container h-30 rounded-xl overflow-hidden relative">
+        <video ref={videoRef} className="w-full h-full object-cover" />
+
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-3/4 h-1/2 border-2 border-dotted border-green-400 rounded-lg"></div>
+        </div>
       </div>
       <h1>You can manually enter a barcode or an ingredient.</h1>
       <div className="flex items-center justify-center gap-3 flex-col md:flex-row">
