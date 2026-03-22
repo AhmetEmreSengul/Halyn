@@ -60,6 +60,12 @@ const LandingPage = () => {
           video: {
             facingMode: "environment",
             advanced: [{ focusMode: "continuous", zoom: 1 } as any],
+            width: 1920,
+            height: 1080,
+            sampleRate: 44800,
+            autoGainControl: true,
+            frameRate: { ideal: 60 },
+            noiseSuppression: true,
           },
         });
 
@@ -107,7 +113,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
       <h1 className="text-4xl font-bold">Scan Barcode</h1>
-      <div className="max-w-lg container h-30 rounded-xl overflow-hidden relative">
+      <div className="max-w-lg container h-60 rounded-xl overflow-hidden relative">
         <video ref={videoRef} className="w-full h-full object-cover" />
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
