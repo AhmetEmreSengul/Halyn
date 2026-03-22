@@ -52,17 +52,56 @@ const LandingPage = () => {
     if (!videoRef.current) return;
 
     const reader = codeReader.current;
+    let stream: MediaStream | null = null;
 
-    reader.decodeFromVideoDevice(undefined, videoRef.current, (result, _) => {
-      if (result && !isScannedRef.current) {
-        isScannedRef.current = true;
-        scanProductBarcode(result.getText());
+    const startCamera = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: "environment",
+            advanced: [{ focusMode: "continuous", zoom: 1 } as any],
+          },
+        });
 
-        setTimeout(() => {
-          isScannedRef.current = false;
-        }, 2000);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+
+        reader.decodeFromVideoElement(videoRef.current!, (result, _) => {
+          if (result && !isScannedRef.current) {
+            isScannedRef.current = true;
+            scanProductBarcode(result.getText());
+            setTimeout(() => {
+              isScannedRef.current = false;
+            }, 2000);
+          }
+        });
+      } catch (err) {
+        reader.decodeFromVideoDevice(
+          undefined,
+          videoRef.current!,
+          (result, _) => {
+            if (result && !isScannedRef.current) {
+              isScannedRef.current = true;
+              scanProductBarcode(result.getText());
+              setTimeout(() => {
+                isScannedRef.current = false;
+              }, 2000);
+            }
+          },
+        );
       }
-    });
+    };
+
+    startCamera();
+
+    return () => {
+      stream?.getTracks().forEach((t) => t.stop());
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    };
   }, []);
 
   return (
