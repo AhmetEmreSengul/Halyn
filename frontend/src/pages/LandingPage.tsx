@@ -117,7 +117,7 @@ const LandingPage = () => {
         <video ref={videoRef} className="w-full h-full object-cover" />
 
         <div className="absolute top-3 left-5 bg-white/20 backdrop-blur-sm rounded-lg p-2 text-sm md:text-base">
-          Please use flash if possible.
+          Use flash if possible.
         </div>
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

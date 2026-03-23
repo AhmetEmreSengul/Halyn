@@ -52,13 +52,13 @@ const Login = () => {
           />
         </div>
         <button
-          className="bg-stone-300 hover:bg-stone-500 text-black hover:text-white p-4 rounded-lg cursor-pointer transition"
+          className="bg-stone-300 hover:bg-stone-400 text-black hover:text-white p-4 rounded-lg cursor-pointer transition"
           type="submit"
         >
           {isLoggingIn ? "Logging in..." : "Login"}
         </button>
         <button
-          className="border-2 border-stone-300 hover:border-stone-500 text-white p-4 rounded-lg flex items-center justify-center gap-3 cursor-pointer transition"
+          className="border-2 border-stone-300  hover:bg-white text-white hover:text-black p-4 rounded-lg flex items-center justify-center gap-3 cursor-pointer transition"
           type="button"
           onClick={handleGoogleLogin}
         >

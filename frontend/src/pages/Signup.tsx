@@ -29,10 +29,10 @@ const Login = () => {
         onSubmit={handleSubmit}
         className="flex flex-col gap-7 size-80 md:size-100 justify-center"
       >
-        <h1>Welcome</h1>
+        <h1 className="text-3xl">Welcome</h1>
         <div className="space-y-4">
           <input
-            className="p-4 w-full border rounded-lg"
+            className="p-4 w-full border-2 rounded-lg"
             placeholder="FullName"
             type="text"
             onChange={(e) =>
@@ -40,7 +40,7 @@ const Login = () => {
             }
           />
           <input
-            className="p-4 w-full border rounded-lg"
+            className="p-4 w-full border-2 rounded-lg"
             placeholder="Email"
             type="text"
             onChange={(e) =>
@@ -48,7 +48,7 @@ const Login = () => {
             }
           />
           <input
-            className="p-4 w-full border rounded-lg"
+            className="p-4 w-full border-2 rounded-lg"
             placeholder="Password"
             type="password"
             onChange={(e) =>
@@ -57,13 +57,13 @@ const Login = () => {
           />
         </div>
         <button
-          className="bg-teal-900 text-white p-4 rounded-lg cursor-pointer"
+          className="bg-stone-300 hover:bg-stone-400 text-black hover:text-white p-4 rounded-lg cursor-pointer transition"
           type="submit"
         >
           {isSigninUp ? "Signing up" : "Signup"}
         </button>
         <button
-          className="bg-teal-900 text-white p-4 rounded-lg flex items-center justify-center gap-3"
+          className="border-2 border-stone-300  hover:bg-white text-white hover:text-black p-4 rounded-lg flex items-center justify-center gap-3 cursor-pointer transition"
           type="submit"
           onClick={handleGoogleLogin}
         >
