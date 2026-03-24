@@ -28,6 +28,8 @@ interface PastScans {
   _id: string;
   scanType: string;
   productId: Product;
+  productDeleted?: boolean;
+  barcode: string;
 }
 
 export interface IngredientProduct {

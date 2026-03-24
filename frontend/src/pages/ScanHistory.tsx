@@ -38,15 +38,38 @@ const ScanHistory = () => {
   return (
     <div className="min-h-screen w-screen py-30 flex items-center justify-center">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
-        {pastScans.map((scan) => (
-          <ProductCard
-            key={scan._id}
-            product={scan.productId}
-            showDelete={true}
-            deleteScan={deleteScan}
-            scanId={scan._id}
-          />
-        ))}
+        {pastScans.map((scan) => {
+          if (scan.productDeleted) {
+            return (
+              <div className="w-full md:w-105 max-h-50 bg-green-100 rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
+                <div className="px-7 pt-7 pb-5 border-b border-stone-200">
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+                    <span className="text-xs font-extralight tracking-widest uppercase text-stone-400 font-sans">
+                      Deleted
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word">
+                    {scan.barcode}
+                  </h2>
+                </div>
+                <p className="p-4 font-light text-gray-500">
+                  Product with the barcode shown above was removed from our
+                  records.
+                </p>
+              </div>
+            );
+          }
+          return (
+            <ProductCard
+              key={scan._id}
+              product={scan.productId}
+              showDelete={true}
+              deleteScan={deleteScan}
+              scanId={scan._id}
+            />
+          );
+        })}
       </div>
     </div>
   );

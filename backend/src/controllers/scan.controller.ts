@@ -162,7 +162,14 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Scans not found" });
     }
 
-    return res.status(200).json(scans);
+    const scansWithStatus = scans.map((scan) => ({
+      ...scan.toObject(),
+      productDeleted: scan.productId === null,
+    }));
+
+    return res.status(200).json(scansWithStatus);
+
+    return res.status(200).json(scansWithStatus);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
