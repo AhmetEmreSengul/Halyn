@@ -5,6 +5,7 @@ import passport from "./lib/google";
 import path from "path";
 import authRoutes from "./routes/auth.route";
 import scanRoutes from "./routes/scan.route";
+import adminRoutes from "./routes/admin.route";
 import { connectDB } from "./lib/db";
 import { ENV } from "./lib/env";
 
@@ -20,6 +21,7 @@ app.set("trust proxy", 1);
 
 app.use("/auth", authRoutes);
 app.use("/scan", scanRoutes);
+app.use("/admin", adminRoutes);
 
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../frontend/dist")));
