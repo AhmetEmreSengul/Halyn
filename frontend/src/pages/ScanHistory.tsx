@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useScanStore } from "../store/useScanStore";
 import ProductCard from "../components/ProductCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
+import { FiCopy } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 const ScanHistory = () => {
   const { getUsersPastScans, deleteScan, pastScans, isFetching } =
@@ -35,6 +37,11 @@ const ScanHistory = () => {
     );
   }
 
+  const handleCopy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    toast.success("Barcode copied to clipboard");
+  };
+
   return (
     <div className="min-h-screen w-screen py-30 flex items-center justify-center">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
@@ -49,13 +56,19 @@ const ScanHistory = () => {
                       Deleted
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word">
-                    {scan.barcode}
+                  <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word inline-flex items-center gap-2">
+                    {scan.barcode}{" "}
+                    <span
+                      onClick={() => handleCopy(scan.barcode)}
+                      className="cursor-pointer"
+                    >
+                      <FiCopy />
+                    </span>
                   </h2>
                 </div>
                 <p className="p-4 font-light text-gray-500">
-                  Product with the barcode shown above was removed from our
-                  records.
+                  Product with this barcode was removed from our records. You
+                  can try scanning it again.
                 </p>
               </div>
             );
