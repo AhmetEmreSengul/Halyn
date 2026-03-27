@@ -18,6 +18,10 @@ const Navbar = () => {
             return null;
           }
 
+          if (authUser?.role !== "admin" && item.requiresAdmin) {
+            return null;
+          }
+
           return (
             <div className="hover:text-stone-200 transition" key={item.link}>
               <Link to={item.link}> {item.title} </Link>

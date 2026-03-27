@@ -168,8 +168,6 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
     }));
 
     return res.status(200).json(scansWithStatus);
-
-    return res.status(200).json(scansWithStatus);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

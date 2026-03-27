@@ -2,7 +2,7 @@ interface NavItemTypes {
   link: string;
   title: string;
   protected: boolean;
-  requiresAuth: boolean;
+  requiresAdmin: boolean;
 }
 
 export const navItems: NavItemTypes[] = [
@@ -10,6 +10,12 @@ export const navItems: NavItemTypes[] = [
     link: "/scan-history",
     title: "Scan History",
     protected: true,
-    requiresAuth: true,
+    requiresAdmin: false,
+  },
+  {
+    link: "/admin-dashboard",
+    title: "Admin Dashboard",
+    protected: true,
+    requiresAdmin: true,
   },
 ];

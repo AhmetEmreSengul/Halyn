@@ -24,7 +24,7 @@ export interface Product {
   scanCount: number;
 }
 
-interface PastScans {
+export interface PastScans {
   _id: string;
   scanType: string;
   productId: Product;

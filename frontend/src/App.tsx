@@ -9,9 +9,14 @@ import Login from "./pages/Login";
 import ScanHistory from "./pages/ScanHistory";
 import Signup from "./pages/Signup";
 import { useAuthStore } from "./store/useAuthStore";
+import AdminDashboard from "./pages/AdminDashboard";
+import UserActivity from "./pages/UserActivity";
+import ManageProducts from "./pages/ManageProducts";
 
 const App = () => {
   const { isCheckingAuth, authUser, checkAuth } = useAuthStore();
+
+  const isAdmin = authUser?.role === "admin";
 
   useEffect(() => {
     checkAuth();
@@ -41,6 +46,18 @@ const App = () => {
         />
         <Route path="/scan-history" element={<ScanHistory />} />
         <Route path="/auth/google/success" element={<GoogleSuccess />} />
+        <Route
+          path="/admin-dashboard"
+          element={isAdmin ? <AdminDashboard /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/user-activity/:id"
+          element={isAdmin ? <UserActivity /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/manage-products"
+          element={isAdmin ? <ManageProducts /> : <Navigate to={"/"} />}
+        />
       </Routes>
     </div>
   );

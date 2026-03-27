@@ -42,20 +42,26 @@ export const statusConfig = {
 
 const ProductCard = ({
   product,
-  showDelete,
+  showScanDelete,
+  showProductDelete,
   deleteScan,
+  deleteProduct,
   scanId,
+  productId,
 }: {
   product: Product;
-  showDelete?: boolean;
+  showScanDelete?: boolean;
+  showProductDelete?: boolean;
   deleteScan?: (id: string) => Promise<void>;
+  deleteProduct?: (id: string) => Promise<void>;
   scanId?: string;
+  productId?: string;
 }) => {
   const [showIngredients, setShowIngredients] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const s = statusConfig[product.halalStatus] ?? statusConfig.unknown;
 
-  const handleDelete = () => {
+  const handleDeleteScan = () => {
     if (deleteScan && scanId) {
       deleteScan(scanId);
     }
@@ -94,10 +100,18 @@ const ProductCard = ({
               </p>
             </div>
 
-            {showDelete && (
+            {showScanDelete && (
               <button
                 className="h-fit w-fit p-2 bg-red-400 hover:bg-red-500 transition rounded-lg cursor-pointer"
                 onClick={() => setDeleteId(scanId ?? "")}
+              >
+                Delete scan
+              </button>
+            )}
+            {showProductDelete && (
+              <button
+                className="h-fit w-fit p-2 bg-red-400 hover:bg-red-500 transition rounded-lg cursor-pointer"
+                onClick={() => deleteProduct?.(productId ?? "")}
               >
                 Delete scan
               </button>
@@ -223,7 +237,7 @@ const ProductCard = ({
                   Cancel
                 </button>
                 <button
-                  onClick={handleDelete}
+                  onClick={handleDeleteScan}
                   className="px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-red-400 hover:bg-red-500 transition cursor-pointer"
                 >
                   Delete

@@ -7,6 +7,9 @@ export interface AuthUser {
   fullName: string;
   email: string;
   password: string;
+  role: string;
+  isBanned: boolean;
+  createdAt: string;
 }
 
 export interface SignupData {

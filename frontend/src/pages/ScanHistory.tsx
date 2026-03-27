@@ -77,7 +77,7 @@ const ScanHistory = () => {
             <ProductCard
               key={scan._id}
               product={scan.productId}
-              showDelete={true}
+              showScanDelete={true}
               deleteScan={deleteScan}
               scanId={scan._id}
             />

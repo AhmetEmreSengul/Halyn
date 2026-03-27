@@ -3,6 +3,21 @@ import User from "../models/User";
 import ScanHistory from "../models/ScanHistory";
 import { Product } from "../models/Product";
 
+export const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await Product.find();
+
+    if (!products) {
+      return res.status(404).json({ message: "Products not found" });
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find({
@@ -20,13 +35,20 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const getScansByUserId = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const scanHistory = await ScanHistory.find({ userId: id });
+    const scanHistory = await ScanHistory.find({ userId: id }).populate(
+      "productId",
+    );
 
     if (scanHistory.length === 0) {
       return res.status(404).json({ message: "Scan history not found" });
     }
 
-    res.status(200).json(scanHistory);
+    const scansWithStatus = scanHistory.map((scan) => ({
+      ...scan.toObject(),
+      productDeleted: scan.productId === null,
+    }));
+
+    return res.status(200).json(scansWithStatus);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
