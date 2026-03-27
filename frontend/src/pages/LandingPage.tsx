@@ -185,7 +185,7 @@ const LandingPage = () => {
                 <ProductCard
                   key={product._id}
                   product={product}
-                  showDelete={false}
+                  showScanDelete={false}
                 />
               ))}
             </div>
