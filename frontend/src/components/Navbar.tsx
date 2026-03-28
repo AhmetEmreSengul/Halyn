@@ -1,9 +1,14 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { navItems } from "../Data";
 import { useAuthStore } from "../store/useAuthStore";
 
 const Navbar = () => {
   const { authUser, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <div className="fixed md:top-5 md:rounded-full w-screen md:w-5xl md:container h-25 md:h-17 bg-green-900/20 backdrop-blur-sm flex items-center justify-between px-5 md:px-20 z-10">
@@ -31,7 +36,7 @@ const Navbar = () => {
         {authUser ? (
           <button
             className="cursor-pointer hover:text-stone-200 transition"
-            onClick={logout}
+            onClick={handleLogout}
           >
             Logout
           </button>
