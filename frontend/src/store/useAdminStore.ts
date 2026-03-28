@@ -9,18 +9,21 @@ interface AdminStore {
   isLoading: boolean;
   userScans: PastScans[];
   products: Product[];
+  filteredProducts: Product[];
 
   getUsers: () => Promise<void>;
   getScansByUserId: (id: string) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   getAllProducts: () => Promise<void>;
+  searchProduct: (data: string) => void;
 }
 
-export const useAdminStore = create<AdminStore>((set) => ({
+export const useAdminStore = create<AdminStore>((set, get) => ({
   users: [],
   isLoading: false,
   userScans: [],
   products: [],
+  filteredProducts: [],
 
   getAllProducts: async () => {
     try {
@@ -69,5 +72,17 @@ export const useAdminStore = create<AdminStore>((set) => ({
       console.error(error);
       toast.error(error?.response?.data?.message);
     }
+  },
+
+  searchProduct: (data) => {
+    const list = get().products;
+
+    const filtered = list.filter(
+      (item) =>
+        item.barcode.includes(data) ||
+        item.name.toLowerCase().includes(data.toLowerCase()),
+    );
+
+    set({ filteredProducts: filtered });
   },
 }));
