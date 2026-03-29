@@ -7,6 +7,7 @@ import type { PastScans, Product } from "./useScanStore";
 interface AdminStore {
   users: AuthUser[];
   isLoading: boolean;
+  isDeleting: boolean;
   userScans: PastScans[];
   products: Product[];
   filteredProducts: Product[];
@@ -21,6 +22,7 @@ interface AdminStore {
 export const useAdminStore = create<AdminStore>((set, get) => ({
   users: [],
   isLoading: false,
+  isDeleting: false,
   userScans: [],
   products: [],
   filteredProducts: [],
@@ -66,11 +68,14 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
 
   deleteProduct: async (id) => {
     try {
+      set({ isDeleting: true });
       await axiosInstance.delete(`/admin/delete-product/${id}`);
       toast.success("Product deleted.");
     } catch (error: any) {
       console.error(error);
       toast.error(error?.response?.data?.message);
+    } finally {
+      set({ isDeleting: false });
     }
   },
 

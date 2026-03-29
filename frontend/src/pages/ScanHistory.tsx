@@ -6,8 +6,7 @@ import { FiCopy } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const ScanHistory = () => {
-  const { getUsersPastScans, deleteScan, pastScans, isFetching } =
-    useScanStore();
+  const { getUsersPastScans, pastScans, isFetching } = useScanStore();
 
   useEffect(() => {
     getUsersPastScans();
@@ -78,7 +77,6 @@ const ScanHistory = () => {
               key={scan._id}
               product={scan.productId}
               showScanDelete={true}
-              deleteScan={deleteScan}
               scanId={scan._id}
             />
           );

@@ -45,6 +45,7 @@ interface ScanStore {
   product: Product | null;
   isLoading: boolean;
   isFetching: boolean;
+  isDeleting: boolean;
   pastScans: PastScans[];
   popularScans: Product[];
   ingredientsProduct: IngredientProduct | null;
@@ -60,6 +61,7 @@ export const useScanStore = create<ScanStore>((set) => ({
   product: null,
   isLoading: false,
   isFetching: false,
+  isDeleting: false,
   pastScans: [],
   popularScans: [],
   ingredientsProduct: null,
@@ -109,6 +111,7 @@ export const useScanStore = create<ScanStore>((set) => ({
 
   deleteScan: async (id) => {
     try {
+      set({ isDeleting: true });
       await axiosInstance.delete(`/scan/delete-scan/${id}`);
       set((state) => ({
         pastScans: state.pastScans.filter((scan) => scan._id !== id),
@@ -117,6 +120,8 @@ export const useScanStore = create<ScanStore>((set) => ({
     } catch (error: any) {
       console.error(error);
       toast.error(error.response.data.message);
+    } finally {
+      set({ isDeleting: false });
     }
   },
 

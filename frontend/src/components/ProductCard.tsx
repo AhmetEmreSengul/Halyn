@@ -1,5 +1,7 @@
 import { useState } from "react";
-import type { Product } from "../store/useScanStore";
+import { useScanStore, type Product } from "../store/useScanStore";
+import { useAdminStore } from "../store/useAdminStore";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export const statusConfig = {
   halal: {
@@ -44,28 +46,32 @@ const ProductCard = ({
   product,
   showScanDelete,
   showProductDelete,
-  deleteScan,
-  deleteProduct,
   scanId,
-  productId,
 }: {
   product: Product;
   showScanDelete?: boolean;
   showProductDelete?: boolean;
-  deleteScan?: (id: string) => Promise<void>;
-  deleteProduct?: (id: string) => Promise<void>;
   scanId?: string;
-  productId?: string;
 }) => {
   const [showIngredients, setShowIngredients] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
+  const [deleteScanId, setDeleteScanId] = useState("");
+  const [deleteProductId, setDeleteProductId] = useState("");
   const s = statusConfig[product.halalStatus] ?? statusConfig.unknown;
+  const { isDeleting, deleteProduct } = useAdminStore();
+  const { isDeleting: isDeletingScan, deleteScan } = useScanStore();
 
-  const handleDeleteScan = () => {
+  const handleDeleteScan = async () => {
     if (deleteScan && scanId) {
-      deleteScan(scanId);
+      await deleteScan(scanId);
     }
-    setDeleteId("");
+    setDeleteScanId("");
+  };
+
+  const handleDeleteProduct = async () => {
+    if (deleteProduct && product._id) {
+      await deleteProduct(product._id);
+    }
+    setDeleteProductId("");
   };
 
   return (
@@ -103,7 +109,7 @@ const ProductCard = ({
             {showScanDelete && (
               <button
                 className="h-fit w-fit p-2 bg-red-400 hover:bg-red-500 transition rounded-lg cursor-pointer"
-                onClick={() => setDeleteId(scanId ?? "")}
+                onClick={() => setDeleteScanId(scanId ?? "")}
               >
                 Delete scan
               </button>
@@ -111,9 +117,9 @@ const ProductCard = ({
             {showProductDelete && (
               <button
                 className="h-fit w-fit p-2 bg-red-400 hover:bg-red-500 transition rounded-lg cursor-pointer"
-                onClick={() => deleteProduct?.(productId ?? "")}
+                onClick={() => setDeleteProductId(product._id ?? "")}
               >
-                Delete scan
+                Delete product
               </button>
             )}
           </div>
@@ -221,7 +227,7 @@ const ProductCard = ({
         )}
       </div>
 
-      {scanId === deleteId && (
+      {scanId === deleteScanId && (
         <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
           <div className="w-full max-w-md p-2 text-center md:p-0">
             <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
@@ -231,16 +237,57 @@ const ProductCard = ({
               </p>
               <div className="flex gap-2.5">
                 <button
-                  onClick={() => setDeleteId("")}
+                  onClick={() => setDeleteScanId("")}
                   className="px-4 py-2.5 text-sm font-semibold hover:text-black rounded-lg border border-stone-200 hover:bg-stone-100 0 transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteScan}
-                  className="px-4 py-2.5 text-sm font-semibold text-white rounded-lg bg-red-400 hover:bg-red-500 transition cursor-pointer"
+                  className={`px-4 py-2.5 text-sm font-semibold text-white rounded-lg ${isDeletingScan ? "bg-gray-400 cursor-not-allowed" : "bg-red-400 hover:bg-red-500 cursor-pointer"} transition `}
                 >
-                  Delete
+                  {isDeletingScan ? (
+                    <span className="inline-flex items-center gap-2">
+                      Deleting
+                      <AiOutlineLoading3Quarters className="size-5 animate-spin" />
+                    </span>
+                  ) : (
+                    "Delete product"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {product._id === deleteProductId && (
+        <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
+          <div className="w-full max-w-md p-2 text-center md:p-0">
+            <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
+              <p className="text-xl text-black leading-snug wrap-break-word">
+                Are you sure you want to delete this scan? This cannot be
+                undone.
+              </p>
+              <div className="flex gap-2.5">
+                <button
+                  onClick={() => setDeleteProductId("")}
+                  className="px-4 py-2.5 text-sm font-semibold hover:text-black rounded-lg border border-stone-200 hover:bg-stone-100 0 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteProduct}
+                  className={`px-4 py-2.5 text-sm font-semibold text-white rounded-lg ${isDeleting ? "bg-gray-400 cursor-not-allowed" : "bg-red-400 hover:bg-red-500 cursor-pointer"} transition `}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <span className="inline-flex items-center gap-2">
+                      Deleting
+                      <AiOutlineLoading3Quarters className="size-5 animate-spin" />
+                    </span>
+                  ) : (
+                    "Delete product"
+                  )}
                 </button>
               </div>
             </div>

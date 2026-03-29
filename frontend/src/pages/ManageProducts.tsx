@@ -3,13 +3,8 @@ import { useAdminStore } from "../store/useAdminStore";
 import ProductCard from "../components/ProductCard";
 
 const ManageProducts = () => {
-  const {
-    filteredProducts,
-    products,
-    getAllProducts,
-    deleteProduct,
-    searchProduct,
-  } = useAdminStore();
+  const { filteredProducts, products, getAllProducts, searchProduct } =
+    useAdminStore();
   const [searchProductInput, setSearchProductInput] = useState("");
 
   useEffect(() => {
@@ -38,8 +33,6 @@ const ManageProducts = () => {
           <div key={product._id}>
             <ProductCard
               product={product}
-              productId={product._id}
-              deleteProduct={deleteProduct}
               showProductDelete
             />
           </div>
