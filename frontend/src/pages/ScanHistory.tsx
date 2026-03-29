@@ -6,7 +6,8 @@ import { FiCopy } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const ScanHistory = () => {
-  const { getUsersPastScans, pastScans, isFetching } = useScanStore();
+  const { pastScans, isFetching, getUsersPastScans, deleteScan } =
+    useScanStore();
 
   useEffect(() => {
     getUsersPastScans();
@@ -55,19 +56,27 @@ const ScanHistory = () => {
                       Deleted
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word inline-flex items-center gap-2">
-                    {scan.barcode}{" "}
-                    <span
-                      onClick={() => handleCopy(scan.barcode)}
-                      className="cursor-pointer"
+                  <div className="flex justify-between">
+                    <h2 className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word inline-flex items-center gap-2">
+                      {scan.barcode}{" "}
+                      <span
+                        onClick={() => handleCopy(scan.barcode)}
+                        className="cursor-pointer"
+                      >
+                        <FiCopy />
+                      </span>
+                    </h2>
+                    <button
+                      onClick={() => deleteScan(scan._id)}
+                      className="p-2 bg-red-400 hover:bg-red-500 transition rounded-lg cursor-pointer"
                     >
-                      <FiCopy />
-                    </span>
-                  </h2>
+                      Delete Scan
+                    </button>
+                  </div>
                 </div>
-                <p className="p-4 font-light text-gray-500">
-                  Product with this barcode was removed from our records. You
-                  can try scanning it again.
+                <p className="p-4 font-light text-gray-600">
+                  Product with this barcode was removed from our records. Please
+                  delete it if you want to scan it again.
                 </p>
               </div>
             );

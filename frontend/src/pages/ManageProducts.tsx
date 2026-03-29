@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAdminStore } from "../store/useAdminStore";
 import ProductCard from "../components/ProductCard";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const ManageProducts = () => {
-  const { filteredProducts, products, getAllProducts, searchProduct } =
-    useAdminStore();
+  const {
+    isLoading,
+    filteredProducts,
+    products,
+    getAllProducts,
+    searchProduct,
+  } = useAdminStore();
   const [searchProductInput, setSearchProductInput] = useState("");
 
   useEffect(() => {
@@ -19,6 +25,14 @@ const ManageProducts = () => {
 
   const productsToBeMapped = filteredProducts ? filteredProducts : products;
 
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-black text-white">
+        <AiOutlineLoading3Quarters className="size-7 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-screen min-h-screen bg-black pt-40">
       <input
@@ -31,10 +45,7 @@ const ManageProducts = () => {
       <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {productsToBeMapped.map((product) => (
           <div key={product._id}>
-            <ProductCard
-              product={product}
-              showProductDelete
-            />
+            <ProductCard product={product} showProductDelete />
           </div>
         ))}
       </div>
