@@ -21,6 +21,9 @@ const LandingPage = () => {
   const [barcode, setBarcode] = useState("");
   const isScannedRef = useRef(false);
   const [ingredientsText, setIngredientsText] = useState("");
+  const [torchOn, setTorchOn] = useState(false);
+
+  const streamRef = useRef<MediaStream | null>(null);
 
   const handleScanSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -39,6 +42,21 @@ const LandingPage = () => {
     useScanStore.setState({ product: null });
     scanProductIngredients(ingredientsText);
     setIngredientsText("");
+  };
+
+  const toggleTorch = async () => {
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track) return;
+
+    const newState = !torchOn;
+    try {
+      await track.applyConstraints({
+        advanced: [{ torch: newState } as any],
+      });
+      setTorchOn(newState);
+    } catch (err) {
+      toast.error("Torch not supported on this device.");
+    }
   };
 
   useEffect(() => {
@@ -68,6 +86,8 @@ const LandingPage = () => {
             noiseSuppression: true,
           },
         });
+
+        streamRef.current = stream;
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -104,6 +124,7 @@ const LandingPage = () => {
 
     return () => {
       stream?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
       if (videoRef.current) {
         videoRef.current.srcObject = null;
       }
@@ -123,6 +144,14 @@ const LandingPage = () => {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-3/4 h-1/2 border-2 border-dotted border-green-400 rounded-lg"></div>
         </div>
+
+        <button
+          onClick={toggleTorch}
+          className="absolute bottom-3 right-3 bg-white/20 backdrop-blur-sm rounded-lg p-2 text-sm hover:bg-white/40 transition cursor-pointer"
+          title={torchOn ? "Turn torch off" : "Turn torch on"}
+        >
+          {torchOn ? "🔦 Off" : "🔦 On"}
+        </button>
       </div>
       <h1>You can manually enter a barcode or an ingredient.</h1>
       <div className="flex items-center justify-center gap-3 flex-col md:flex-row">
