@@ -39,15 +39,13 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     const existingProduct = await Product.findOne({ barcode });
     if (existingProduct) {
-      if (!existingScan) {
-        if (req.user) {
-          await ScanHistory.create({
-            userId: (req.user as any)._id,
-            productId: existingProduct._id,
-            barcode,
-            scanType: "barcode",
-          });
-        }
+      if (!existingScan && req.user) {
+        await ScanHistory.create({
+          userId: (req.user as any)._id,
+          productId: existingProduct._id,
+          barcode,
+          scanType: "barcode",
+        });
       }
       await Product.updateOne(
         { _id: existingProduct._id },
@@ -96,15 +94,13 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       },
     });
 
-    if (req.user) {
-      if (!existingScan) {
-        await ScanHistory.create({
-          userId: (req.user as any)._id,
-          productId: newProduct._id,
-          barcode,
-          scanType: "barcode",
-        });
-      }
+    if (req.user && !existingScan) {
+      await ScanHistory.create({
+        userId: (req.user as any)._id,
+        productId: newProduct._id,
+        barcode,
+        scanType: "barcode",
+      });
     }
 
     return res.json(newProduct);
