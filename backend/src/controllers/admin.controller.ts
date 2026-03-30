@@ -20,12 +20,29 @@ export const getAllProducts = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
     const users = await User.find({
+      _id: { $ne: (req.user as any)._id },
+      role: "user",
+    })
+      .skip(skip)
+      .limit(limit)
+      .select("-password");
+
+    const totalUsers = await User.countDocuments({
       _id: { $ne: (req.user as any)._id },
       role: "user",
     });
 
-    res.status(200).json(users);
+    res.status(200).json({
+      users,
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
