@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAdminStore } from "../store/useAdminStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router";
@@ -6,12 +6,21 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa";
 
 const AdminDashboard = () => {
-  const { isLoading, users, getUsers } = useAdminStore();
+  const { filteredUsers, isLoading, users, totalPages, getUsers, searchUser } =
+    useAdminStore();
   const { authUser } = useAuthStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    getUsers();
-  }, []);
+    getUsers(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      searchUser(search);
+    }, 1000);
+  }, [search]);
 
   if (isLoading) {
     return (
@@ -21,6 +30,8 @@ const AdminDashboard = () => {
     );
   }
 
+  const usersToBeMappped = filteredUsers ? filteredUsers : users;
+
   return (
     <div className="flex flex-col items-center justify-center bg-black w-screen h-screen">
       <h1 className="text-4xl">Admin Dashboard</h1>
@@ -28,7 +39,15 @@ const AdminDashboard = () => {
       <div className="rounded-lg w-lg container mt-20">
         <div>
           <div className="flex justify-between mb-3">
-            <h2 className="text-2xl">Users</h2>
+            <div className="inline-flex items-center gap-2">
+              <h2 className="text-2xl">Users</h2>
+              <input
+                type="text"
+                className="p-1 border rounded-lg"
+                placeholder="Username / _id"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
             <Link
               to={"/manage-products"}
               className="text-2xl text-green-200 hover:text-green-400 transition underline inline-flex items-center gap-1"
@@ -36,7 +55,7 @@ const AdminDashboard = () => {
               Manage Products <FaArrowRight className="size-5" />
             </Link>
           </div>
-          {users.map((user) => (
+          {usersToBeMappped.map((user) => (
             <div
               key={user._id}
               className="border p-2 rounded-lg mb-2 flex justify-between"
@@ -54,6 +73,22 @@ const AdminDashboard = () => {
               </Link>
             </div>
           ))}
+
+          <div>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`${
+                  page === currentPage
+                    ? "bg-green-300 text-white"
+                    : "bg-white text-green-300"
+                } px-3 py-1 rounded-lg mr-2 cursor-pointer`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

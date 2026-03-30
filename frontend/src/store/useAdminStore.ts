@@ -6,23 +6,28 @@ import type { PastScans, Product } from "./useScanStore";
 
 interface AdminStore {
   users: AuthUser[];
+  filteredUsers: AuthUser[];
   isLoading: boolean;
   isDeleting: boolean;
   userScans: PastScans[];
   products: Product[];
   filteredProducts: Product[];
+  totalPages: number;
 
-  getUsers: () => Promise<void>;
+  getUsers: (currentPage?: number) => Promise<void>;
   getScansByUserId: (id: string) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   getAllProducts: () => Promise<void>;
   searchProduct: (data: string) => void;
+  searchUser: (data: string) => void;
 }
 
 export const useAdminStore = create<AdminStore>((set, get) => ({
-  users: [],
+  totalPages: 1,
   isLoading: false,
   isDeleting: false,
+  users: [],
+  filteredUsers: [],
   userScans: [],
   products: [],
   filteredProducts: [],
@@ -40,11 +45,14 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     }
   },
 
-  getUsers: async () => {
+  getUsers: async (currentPage) => {
     try {
       set({ isLoading: true });
-      const res = await axiosInstance.get("/admin/users");
-      set({ users: res.data });
+      const res = await axiosInstance.get(
+        `/admin/users?page=${currentPage}&limit=10`,
+      );
+      set({ users: res.data.users });
+      set({ totalPages: res.data.totalPages });
     } catch (error: any) {
       console.error(error);
       toast.error(error?.response?.data?.message);
@@ -89,5 +97,18 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     );
 
     set({ filteredProducts: filtered });
+  },
+
+  searchUser: (data) => {
+    const list = get().users;
+
+    const filtered = list.filter(
+      (item) =>
+        item.fullName.toLowerCase().includes(data.toLowerCase()) ||
+        item._id.toLowerCase().includes(data.toLowerCase()) ||
+        item.email.toLowerCase().includes(data.toLowerCase()),
+    );
+
+    set({ filteredUsers: filtered });
   },
 }));
