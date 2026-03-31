@@ -5,7 +5,14 @@ import { Product } from "../models/Product";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const products = await Product.find();
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     if (!products) {
       return res.status(404).json({ message: "Products not found" });

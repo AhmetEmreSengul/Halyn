@@ -149,10 +149,15 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
 export const getUsersPastScans = async (req: Request, res: Response) => {
   try {
     const userId = (req.user as any)._id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
 
     const scans = await ScanHistory.find({ userId })
       .sort({ createdAt: -1 })
-      .populate("productId");
+      .populate("productId")
+      .skip(skip)
+      .limit(limit);
 
     if (!scans) {
       return res.status(404).json({ message: "Scans not found" });
