@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useScanStore } from "../store/useScanStore";
 import ProductCard from "../components/ProductCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
@@ -6,12 +6,15 @@ import { FiCopy } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const ScanHistory = () => {
-  const { pastScans, isFetching, getUsersPastScans, deleteScan } =
+  const { totalPages, pastScans, isFetching, getUsersPastScans, deleteScan } =
     useScanStore();
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     getUsersPastScans();
   }, []);
+
+  console.log(pastScans);
 
   if (isFetching) {
     return (
@@ -43,7 +46,7 @@ const ScanHistory = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen py-30 flex items-center justify-center">
+    <div className="min-h-screen w-screen py-30 flex flex-col items-center justify-center">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
         {pastScans.map((scan) => {
           if (scan.productDeleted) {
@@ -90,6 +93,21 @@ const ScanHistory = () => {
             />
           );
         })}
+      </div>
+      <div>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`${
+              page === currentPage
+                ? "bg-green-300 text-white"
+                : "bg-white text-green-300"
+            } px-3 py-1 rounded-lg mr-2 cursor-pointer`}
+          >
+            {page}
+          </button>
+        ))}
       </div>
     </div>
   );

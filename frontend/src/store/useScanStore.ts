@@ -49,15 +49,17 @@ interface ScanStore {
   pastScans: PastScans[];
   popularScans: Product[];
   ingredientsProduct: IngredientProduct | null;
+  totalPages: number;
 
   scanProductBarcode: (barcode: string) => Promise<void>;
   scanProductIngredients: (ingredientsText: string) => Promise<void>;
-  getUsersPastScans: () => Promise<void>;
+  getUsersPastScans: (currentPage?: number) => Promise<void>;
   getMostPopularProducts: () => Promise<void>;
   deleteScan: (id: string) => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
+  totalPages: 1,
   product: null,
   isLoading: false,
   isFetching: false,
@@ -96,11 +98,16 @@ export const useScanStore = create<ScanStore>((set) => ({
     }
   },
 
-  getUsersPastScans: async () => {
+  getUsersPastScans: async (currentPage) => {
     try {
       set({ isFetching: true });
-      const res = await axiosInstance.get("/scan/past-scans");
-      set({ pastScans: res.data });
+      const res = await axiosInstance.get(
+        `/scan/past-scans?page=${currentPage}&limit=6`,
+      );
+      set({ pastScans: res.data.scansWithStatus });
+      set({ totalPages: res.data.totalPages });
+
+      console.log(res.data);
     } catch (error) {
       console.error(error);
       toast.error("Error fetching past scans");

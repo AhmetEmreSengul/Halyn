@@ -6,8 +6,14 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa";
 
 const AdminDashboard = () => {
-  const { filteredUsers, isLoading, users, totalPages, getUsers, searchUser } =
-    useAdminStore();
+  const {
+    filteredUsers,
+    isLoading,
+    users,
+    totalUserPages,
+    getUsers,
+    searchUser,
+  } = useAdminStore();
   const { authUser } = useAuthStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -75,19 +81,21 @@ const AdminDashboard = () => {
           ))}
 
           <div>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`${
-                  page === currentPage
-                    ? "bg-green-300 text-white"
-                    : "bg-white text-green-300"
-                } px-3 py-1 rounded-lg mr-2 cursor-pointer`}
-              >
-                {page}
-              </button>
-            ))}
+            {Array.from({ length: totalUserPages }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`${
+                    page === currentPage
+                      ? "bg-green-300 text-white"
+                      : "bg-white text-green-300"
+                  } px-3 py-1 rounded-lg mr-2 cursor-pointer`}
+                >
+                  {page}
+                </button>
+              ),
+            )}
           </div>
         </div>
       </div>

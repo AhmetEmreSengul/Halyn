@@ -14,11 +14,20 @@ export const getAllProducts = async (req: Request, res: Response) => {
       .limit(limit)
       .sort({ createdAt: -1 });
 
+    const totalProducts = await Product.countDocuments({ _id: { $ne: null } });
+
     if (!products) {
       return res.status(404).json({ message: "Products not found" });
     }
 
-    res.status(200).json(products);
+    res
+      .status(200)
+      .json({
+        products,
+        currentPage: page,
+        totalPages: Math.ceil(totalProducts / limit),
+        totalProducts,
+      });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
