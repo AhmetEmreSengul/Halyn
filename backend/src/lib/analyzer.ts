@@ -522,6 +522,10 @@ function fuzzyMatch(token: string, keyword: string): boolean {
     return token.includes(keyword);
   }
 
+  if (keyword.length <= 4) {
+    return token === keyword;
+  }
+
   if (keyword.length <= 6) {
     return token === keyword || token.includes(keyword);
   }
@@ -532,7 +536,7 @@ function fuzzyMatch(token: string, keyword: string): boolean {
 
 interface Token {
   text: string;
-  index: number; // position in the lowercased source string
+  index: number;
 }
 
 function tokenize(lower: string): Token[] {
@@ -594,15 +598,17 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
       let matchIndex = -1;
 
       if (directIndex !== -1) {
-        matched = keyword;
-        matchIndex = directIndex;
-      } else {
-        for (const token of tokens) {
-          if (fuzzyMatch(token.text, keywordLower)) {
-            matched = token.text;
-            matchIndex = token.index;
-            break;
+        if (keywordLower.length <= 4) {
+          const before = directIndex === 0 ? " " : lower[directIndex - 1];
+          const after = lower[directIndex + keywordLower.length] ?? " ";
+          const isBoundary = /\W/.test(before) && /\W/.test(after);
+          if (isBoundary) {
+            matched = keyword;
+            matchIndex = directIndex;
           }
+        } else {
+          matched = keyword;
+          matchIndex = directIndex;
         }
       }
 
@@ -610,7 +616,31 @@ export function analyzeIngredients(rawText: string): IngredientAnalysis {
 
       if (isOverlappingConsumed(matchIndex, matched.length)) continue;
 
+      const NEGATION_PATTERNS = [
+        /\b(no|not|free\s+from|without|does\s+not\s+contain|contains\s+no|free\s+of|absence\s+of|exclude[sd]?|never|içermez|içermemektedir|bulunmaz|bulunmamaktadır|yok|yoktur|hariç|barındırmaz|ihtiva\s+etmez|olmaksızın|içinde\s+bulunmaz|hiçbir|hiç\s+bir)\b/i,
+      ];
+
+      function isNegated(
+        text: string,
+        matchIndex: number,
+        matchLength: number,
+      ): boolean {
+        // Look back 80 chars for pre-negation (English style: "no pork")
+        const prefixStart = Math.max(0, matchIndex - 80);
+        const prefix = text.slice(prefixStart, matchIndex);
+
+        // Look ahead 80 chars for post-negation (Turkish style: "domuz ... yoktur")
+        const suffixEnd = Math.min(text.length, matchIndex + matchLength + 80);
+        const suffix = text.slice(matchIndex + matchLength, suffixEnd);
+
+        return NEGATION_PATTERNS.some(
+          (pattern) => pattern.test(prefix) || pattern.test(suffix),
+        );
+      }
+
       const context = getContextWindow(lower, matchIndex, 60);
+
+      if (isNegated(lower, matchIndex, matched.length)) continue;
 
       let effectiveStatus = rule.status;
 
