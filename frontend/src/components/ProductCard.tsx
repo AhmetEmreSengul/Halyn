@@ -252,7 +252,7 @@ const ProductCard = ({
                       <AiOutlineLoading3Quarters className="size-5 animate-spin" />
                     </span>
                   ) : (
-                    "Delete product"
+                    "Delete scan"
                   )}
                 </button>
               </div>
