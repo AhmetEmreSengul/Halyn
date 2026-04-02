@@ -32,6 +32,8 @@ interface AuthStore {
   signup: (data: SignupData) => Promise<void>;
   login: (data: LoginData) => Promise<void>;
   logout: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -88,6 +90,26 @@ export const useAuthStore = create<AuthStore>((set) => ({
     } catch (error) {
       console.error(error);
       toast.error("Error logging out");
+    }
+  },
+
+  forgotPassword: async (email) => {
+    try {
+      await axiosInstance.post("/auth/forgot-password", { email });
+      toast.success("Password reset email sent");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error sending password reset email");
+    }
+  },
+
+  resetPassword: async (token, password) => {
+    try {
+      await axiosInstance.post(`/auth/reset-password/${token}`, { password });
+      toast.success("Password reset successful");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error resetting password");
     }
   },
 }));

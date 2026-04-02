@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { FaGoogle } from "react-icons/fa";
+import { FaFish, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
 
 const Login = () => {
@@ -57,6 +57,12 @@ const Login = () => {
         >
           {isLoggingIn ? "Logging in..." : "Login"}
         </button>
+        <Link
+          to={"/forgot-password"}
+          className="inline-flex items-center gap-2 underline hover:text-green-200 transition cursor-pointer"
+        >
+          Forgot Password? <FaFish className="size-7" />
+        </Link>
         <button
           className="border-2 border-stone-300  hover:bg-white text-white hover:text-black p-4 rounded-lg flex items-center justify-center gap-3 cursor-pointer transition"
           type="button"
