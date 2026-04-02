@@ -3,6 +3,12 @@ import { generateToken } from "../lib/utils";
 import { ENV } from "../lib/env";
 import User from "../models/User";
 import bcryptjs from "bcryptjs";
+import crypto from "crypto";
+import {
+  sendPasswordResetEmail,
+  sendPasswordResetEmailSuccess,
+} from "../emails/emailHandler";
+import { send } from "process";
 
 export const signup = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -77,6 +83,59 @@ export const login = async (req: Request, res: Response) => {
 export const logout = (req: Request, res: Response) => {
   res.cookie("jwt", "", { maxAge: 0 });
   res.status(200).json({ message: "Logged out" });
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetTokenExpiresAt = new Date(Date.now() + 3600000);
+
+    user.passwordResetToken = resetToken;
+    user.passwordResetExpiresAt = resetTokenExpiresAt;
+    await user.save();
+
+    sendPasswordResetEmail(user.email, resetToken);
+
+    res.status(200).json({ message: "Password reset email sent" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const passwordReset = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user)
+      return res.status(400).json({ message: "Invalid or expired token" });
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    user.password = hashedPassword;
+    user.passwordResetToken = null;
+    user.passwordResetExpiresAt = null;
+
+    await user.save();
+
+    sendPasswordResetEmailSuccess(user.email);
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const googleAuthCallback = async (req: Request, res: Response) => {

@@ -2,9 +2,11 @@ import express from "express";
 import passport from "passport";
 import { protectRoute } from "../middleware/auth.middleware";
 import {
+  forgotPassword,
   googleAuthCallback,
   login,
   logout,
+  passwordReset,
   signup,
 } from "../controllers/auth.controller";
 import { arcjetProtection } from "../middleware/arcjet.middleware";
@@ -16,6 +18,8 @@ router.use(arcjetProtection);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", passwordReset);
 
 router.get("/check", protectRoute, (req, res) =>
   res.status(200).json(req.user),
