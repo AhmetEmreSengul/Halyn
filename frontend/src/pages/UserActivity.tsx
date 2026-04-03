@@ -32,16 +32,20 @@ const UserActivity = () => {
   }
 
   return (
-    <div className="w-screen h-screen grid grid-cols-3 items-center justify-center gap-2 bg-black">
+    <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-center gap-2 bg-black">
       {userScans.map((scan) => {
         if (scan.productDeleted) {
           return (
-            <div className="w-md border rounded-lg p-2 bg-green-100 text-black">
-              <p className="text-xl  leading-snug wrap-break-word">
-                Product with the barcode
-                <span className="text-green-600 mx-1">{scan.barcode}</span> was
-                scanned by the user but deleted from our records.
-              </p>
+            <div className="flex items-center justify-center p-4">
+              <div className="max-w-lg h-max container border rounded-lg p-2 bg-green-100 text-black">
+                <p className="text-xl  leading-snug wrap-break-word">
+                  Product with the barcode
+                  <span className="text-green-600 mx-1">
+                    {scan.barcode}
+                  </span>{" "}
+                  was scanned by the user but deleted from our records.
+                </p>
+              </div>
             </div>
           );
         }
