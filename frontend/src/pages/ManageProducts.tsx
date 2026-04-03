@@ -16,8 +16,8 @@ const ManageProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    getAllProducts();
-  }, []);
+    getAllProducts(currentPage);
+  }, [currentPage]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -36,7 +36,7 @@ const ManageProducts = () => {
   }
 
   return (
-    <div className="w-screen min-h-screen bg-black pt-40 flex flex-col items-center ">
+    <div className="w-screen min-h-screen bg-black pt-40 flex flex-col items-center">
       <input
         className="border rounded-lg p-2 mx-10"
         type="text"
