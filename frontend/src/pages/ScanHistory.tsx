@@ -43,6 +43,8 @@ const ScanHistory = () => {
     toast.success("Barcode copied to clipboard");
   };
 
+  console.log(pastScans);
+
   return (
     <div className="min-h-screen w-screen py-30 flex flex-col items-center justify-center">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">

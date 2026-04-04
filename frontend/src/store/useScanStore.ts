@@ -106,8 +106,6 @@ export const useScanStore = create<ScanStore>((set) => ({
       );
       set({ pastScans: res.data.scansWithStatus });
       set({ totalPages: res.data.totalPages });
-
-      console.log(res.data);
     } catch (error) {
       console.error(error);
       toast.error("Error fetching past scans");

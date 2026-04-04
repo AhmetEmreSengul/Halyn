@@ -159,9 +159,7 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit);
 
-    const totalProducts = await Product.countDocuments({
-      _id: { $ne: null },
-    });
+    const totalScans = await ScanHistory.countDocuments({ userId });
 
     if (!scans) {
       return res.status(404).json({ message: "Scans not found" });
@@ -175,7 +173,7 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
     return res.status(200).json({
       scansWithStatus,
       currentPage: page,
-      totalPages: Math.ceil(totalProducts / limit),
+      totalPages: Math.ceil(totalScans / limit),
     });
   } catch (error) {
     console.error(error);
