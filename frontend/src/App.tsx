@@ -14,6 +14,7 @@ import UserActivity from "./pages/UserActivity";
 import ManageProducts from "./pages/ManageProducts";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AllScans from "./pages/AllScans";
 
 const App = () => {
   const { isCheckingAuth, authUser, checkAuth } = useAuthStore();
@@ -60,6 +61,7 @@ const App = () => {
           path="/manage-products"
           element={isAdmin ? <ManageProducts /> : <Navigate to={"/"} />}
         />
+        <Route path="/all-scans" element = {<AllScans/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>

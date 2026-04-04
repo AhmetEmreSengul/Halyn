@@ -48,6 +48,7 @@ interface ScanStore {
   isDeleting: boolean;
   pastScans: PastScans[];
   popularScans: Product[];
+  allScans: Product[];
   ingredientsProduct: IngredientProduct | null;
   totalPages: number;
 
@@ -56,6 +57,7 @@ interface ScanStore {
   getUsersPastScans: (currentPage?: number) => Promise<void>;
   getMostPopularProducts: () => Promise<void>;
   deleteScan: (id: string) => Promise<void>;
+  getAllScans: () => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
@@ -66,7 +68,20 @@ export const useScanStore = create<ScanStore>((set) => ({
   isDeleting: false,
   pastScans: [],
   popularScans: [],
+  allScans: [],
   ingredientsProduct: null,
+
+  getAllScans: async () => {
+    try {
+      set({ isFetching: true });
+      const res = await axiosInstance.get("/scan/all-scans");
+      set({ allScans: res.data });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ isFetching: false });
+    }
+  },
 
   scanProductBarcode: async (barcode) => {
     try {

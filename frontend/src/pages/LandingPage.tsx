@@ -5,6 +5,7 @@ import IngredientScanCard from "../components/IngredientScanCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import ProductCard from "../components/ProductCard";
 import { useScanStore } from "../store/useScanStore";
+import Footer from "../components/Footer";
 
 const LandingPage = () => {
   const {
@@ -132,7 +133,7 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 py-60">
+    <div className="min-h-screen w-screen flex flex-col items-center justify-center gap-5 pt-40">
       <h1 className="text-4xl font-bold">Scan Barcode</h1>
       <div className="max-w-lg container h-60 rounded-xl overflow-hidden relative">
         <video ref={videoRef} className="w-full h-full object-cover" />
@@ -221,6 +222,7 @@ const LandingPage = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

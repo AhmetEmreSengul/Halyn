@@ -1,6 +1,7 @@
 import express from "express";
 import {
   deleteScan,
+  getAllScans,
   getMostPopularProducts,
   getUsersPastScans,
   scanIngredientsText,
@@ -15,6 +16,7 @@ const router = express.Router();
 router.use(optionalAuth);
 router.use(arcjetProtection);
 
+router.get("/all-scans", getAllScans);
 router.post("/barcode", scanProductBarcode);
 router.post("/ingredients", scanIngredientsText);
 router.get("/past-scans", protectRoute, getUsersPastScans);

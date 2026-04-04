@@ -16,6 +16,17 @@ const normalizeText = (text: string) => {
     .replace(/ç/g, "c");
 };
 
+export const getAllScans = async (req: Request, res: Response) => {
+  try {
+    const scans = await Product.find();
+
+    return res.status(200).json(scans);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const scanProductBarcode = async (req: Request, res: Response) => {
   try {
     const { barcode } = req.body;
