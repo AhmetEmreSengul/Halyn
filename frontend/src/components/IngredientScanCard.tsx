@@ -1,5 +1,5 @@
+import { statusConfig } from "../Data";
 import type { IngredientProduct } from "../store/useScanStore";
-import { statusConfig } from "./ProductCard";
 
 const IngredientScanCard = ({
   ingredientProduct,
