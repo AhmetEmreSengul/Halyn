@@ -3,7 +3,7 @@ import { Link } from "react-router";
 const Footer = () => {
   return (
     <div className="w-full h-60 md:h-40 border-t-2 flex items-center">
-      <div className="flex justify-center md:justify-between items-center px-30 w-full flex-col md:flex-row">
+      <div className="flex justify-center md:justify-between items-center px-0 md:px-30 w-full flex-col md:flex-row">
         <div>
           <div className="inline-flex items-center">
             <img src="./halyn_logo.png" className="size-15" />
