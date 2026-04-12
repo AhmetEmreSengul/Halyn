@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/User";
 import ScanHistory from "../models/ScanHistory";
 import { Product } from "../models/Product";
+import { Report } from "../models/Reports";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -20,14 +21,12 @@ export const getAllProducts = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Products not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        products,
-        currentPage: page,
-        totalPages: Math.ceil(totalProducts / limit),
-        totalProducts,
-      });
+    res.status(200).json({
+      products,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -99,6 +98,19 @@ export const deleteProduct = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getProductReports = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const reports = await Report.find({ productId: id }).populate("userId");
+
+    return res.status(200).json(reports);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

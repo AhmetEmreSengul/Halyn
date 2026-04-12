@@ -4,6 +4,7 @@ import {
   getAllScans,
   getMostPopularProducts,
   getUsersPastScans,
+  reportProduct,
   scanIngredientsText,
   scanProductBarcode,
 } from "../controllers/scan.controller";
@@ -22,5 +23,6 @@ router.post("/ingredients", scanIngredientsText);
 router.get("/past-scans", protectRoute, getUsersPastScans);
 router.get("/popular", getMostPopularProducts);
 router.delete("/delete-scan/:id", protectRoute, deleteScan);
+router.post("/report-product/:id", protectRoute, reportProduct);
 
 export default router;

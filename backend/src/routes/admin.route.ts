@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getAllProducts,
   getAllUsers,
+  getProductReports,
   getScansByUserId,
 } from "../controllers/admin.controller";
 import { isAdmin } from "../middleware/admin.middleware";
@@ -17,5 +18,6 @@ router.get("/products", getAllProducts);
 router.get("/users", getAllUsers);
 router.get("/user-scan-history/:id", getScansByUserId);
 router.delete("/delete-product/:id", deleteProduct);
+router.get("/product-reports/:id", protectRoute, getProductReports);
 
 export default router;

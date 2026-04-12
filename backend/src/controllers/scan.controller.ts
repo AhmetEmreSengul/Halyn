@@ -4,6 +4,7 @@ import axios from "axios";
 
 import ScanHistory from "../models/ScanHistory";
 import { analyzeIngredients } from "../lib/analyzer";
+import { Report } from "../models/Reports";
 
 const normalizeText = (text: string) => {
   return text
@@ -223,3 +224,47 @@ export const getMostPopularProducts = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const reportProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = (req.user as any)._id;
+    const { reportReason, reportDescription } = req.body;
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (!reportReason) {
+      return res.status(400).json({ message: "Report reason is required" });
+    }
+
+    const existingReport = await Report.findOne({
+      productId: id,
+      userId,
+      createdAt: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+    });
+
+    if (existingReport) {
+      return res.status(400).json({
+        message:
+          "You have already reported this product please wait 24 hours before reporting again.",
+      });
+    }
+
+    const newReport = await Report.create({
+      productId: id,
+      userId,
+      reportReason,
+      reportDescription,
+    });
+
+    return res.status(201).json(newReport);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
