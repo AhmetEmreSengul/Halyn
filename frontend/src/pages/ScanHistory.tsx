@@ -90,6 +90,7 @@ const ScanHistory = () => {
               product={scan.productId}
               showScanDelete={true}
               scanId={scan._id}
+              showProductReport={true}
             />
           );
         })}

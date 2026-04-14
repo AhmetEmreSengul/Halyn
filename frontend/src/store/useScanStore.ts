@@ -46,6 +46,7 @@ interface ScanStore {
   isLoading: boolean;
   isFetching: boolean;
   isDeleting: boolean;
+  isReporting: boolean;
   pastScans: PastScans[];
   popularScans: Product[];
   allScans: Product[];
@@ -58,6 +59,11 @@ interface ScanStore {
   getMostPopularProducts: () => Promise<void>;
   deleteScan: (id: string) => Promise<void>;
   getAllScans: () => Promise<void>;
+  reportProduct: (
+    id: string,
+    reportReason: string,
+    reportDescription?: string,
+  ) => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
@@ -66,6 +72,7 @@ export const useScanStore = create<ScanStore>((set) => ({
   isLoading: false,
   isFetching: false,
   isDeleting: false,
+  isReporting: false,
   pastScans: [],
   popularScans: [],
   allScans: [],
@@ -155,6 +162,22 @@ export const useScanStore = create<ScanStore>((set) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isFetching: false });
+    }
+  },
+
+  reportProduct: async (id, reportReason, reportDescription) => {
+    try {
+      set({ isReporting: true });
+      await axiosInstance.post(`/scan/report-product/${id}`, {
+        reportReason,
+        reportDescription,
+      });
+      toast.success("Product reported.");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isReporting: false });
     }
   },
 }));

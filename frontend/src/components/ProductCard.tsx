@@ -8,19 +8,31 @@ const ProductCard = ({
   product,
   showScanDelete,
   showProductDelete,
+  showProductReport,
   scanId,
 }: {
   product: Product;
   showScanDelete?: boolean;
   showProductDelete?: boolean;
+  showProductReport?: boolean;
   scanId?: string;
 }) => {
   const [showIngredients, setShowIngredients] = useState(false);
   const [deleteScanId, setDeleteScanId] = useState("");
   const [deleteProductId, setDeleteProductId] = useState("");
+  const [reportData, setReportData] = useState({
+    _id: "",
+    reportReason: "",
+    reportDescription: "",
+  });
   const s = statusConfig[product.halalStatus] ?? statusConfig.unknown;
   const { isDeleting, deleteProduct } = useAdminStore();
-  const { isDeleting: isDeletingScan, deleteScan } = useScanStore();
+  const {
+    isDeleting: isDeletingScan,
+    isReporting,
+    deleteScan,
+    reportProduct,
+  } = useScanStore();
 
   const handleDeleteScan = async () => {
     if (deleteScan && scanId) {
@@ -34,6 +46,21 @@ const ProductCard = ({
       await deleteProduct(product._id);
     }
     setDeleteProductId("");
+  };
+
+  const handleReportProduct = async () => {
+    if (reportData && reportProduct) {
+      await reportProduct(
+        reportData._id,
+        reportData.reportReason,
+        reportData.reportDescription,
+      );
+    }
+    setReportData({
+      _id: "",
+      reportReason: "",
+      reportDescription: "",
+    });
   };
 
   return (
@@ -88,7 +115,7 @@ const ProductCard = ({
         </div>
 
         <div
-          className={`px-3 py-5 flex items-center gap-5 border-b border-stone-200 ${s.badge} border-0 border-b`}
+          className={`px-6 py-5 flex items-center gap-5 border-b border-stone-200 ${s.badge} border-0 border-b`}
         >
           <div className="flex items-center gap-3 flex-1">
             <div
@@ -107,6 +134,14 @@ const ProductCard = ({
               </p>
             </div>
           </div>
+          {showProductReport && (
+            <button
+              onClick={() => setReportData({ ...reportData, _id: product._id })}
+              className="p-2  rounded-lg bg-red-400 hover:bg-red-500 cursor-pointer transition"
+            >
+              Report Issue
+            </button>
+          )}
         </div>
 
         <div className="px-7 py-5 border-b border-stone-200">
@@ -189,7 +224,7 @@ const ProductCard = ({
         )}
       </div>
 
-      {scanId === deleteScanId && (
+      {scanId === deleteScanId && showScanDelete && (
         <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
           <div className="w-full max-w-md p-2 text-center md:p-0">
             <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
@@ -222,7 +257,7 @@ const ProductCard = ({
           </div>
         </div>
       )}
-      {product._id === deleteProductId && (
+      {product._id === deleteProductId && showProductDelete && (
         <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
           <div className="w-full max-w-md p-2 text-center md:p-0">
             <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
@@ -249,6 +284,63 @@ const ProductCard = ({
                     </span>
                   ) : (
                     "Delete product"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {product._id === reportData._id && showProductReport && (
+        <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
+          <div className="w-full max-w-md p-5 text-center md:p-0">
+            <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
+              <h2 className="text-2xl">Report Product</h2>
+              <select
+                onChange={(e) =>
+                  setReportData({ ...reportData, reportReason: e.target.value })
+                }
+                className="p-2 rounded-lg border-2 bg-black/50"
+              >
+                <option value="">Select reason</option>
+                <option value="inappropriate">Inappropriate</option>
+                <option value="fake">Fake</option>
+                <option value="spam">Spam</option>
+                <option value="other">Other</option>
+              </select>
+
+              <textarea
+                name=""
+                id=""
+                placeholder="Description (optional)"
+                className=" border-2 rounded-lg w-full p-2 bg-black/20"
+                onChange={(e) =>
+                  setReportData({
+                    ...reportData,
+                    reportDescription: e.target.value,
+                  })
+                }
+              />
+              <div className="flex gap-2.5">
+                <button
+                  onClick={() => setReportData({ ...reportData, _id: "" })}
+                  className="px-4 py-2.5 text-sm font-semibold hover:text-black rounded-lg border border-stone-200 hover:bg-stone-100 0 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  className={`px-4 py-2.5 text-sm font-semibold text-white rounded-lg ${isReporting ? "bg-gray-400 cursor-not-allowed" : "bg-red-400 hover:bg-red-500 cursor-pointer"} transition `}
+                  disabled={isReporting}
+                  onClick={handleReportProduct}
+                >
+                  {isReporting ? (
+                    <span className="inline-flex items-center gap-2">
+                      Reporting
+                      <AiOutlineLoading3Quarters className="size-5 animate-spin" />
+                    </span>
+                  ) : (
+                    "Report product"
                   )}
                 </button>
               </div>

@@ -4,6 +4,14 @@ import toast from "react-hot-toast";
 import type { AuthUser } from "./useAuthStore";
 import type { PastScans, Product } from "./useScanStore";
 
+interface ProductReport {
+  user: AuthUser;
+  productId: string;
+  reportReason: "inappropriate" | "fake" | "spam" | "other";
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface AdminStore {
   users: AuthUser[];
   filteredUsers: AuthUser[];
@@ -14,6 +22,7 @@ interface AdminStore {
   filteredProducts: Product[];
   totalUserPages: number;
   totalProductPages: number;
+  productReports: ProductReport[];
 
   getUsers: (currentPage?: number) => Promise<void>;
   getScansByUserId: (id: string) => Promise<void>;
@@ -21,6 +30,7 @@ interface AdminStore {
   getAllProducts: (currentPage?: number) => Promise<void>;
   searchProduct: (data: string) => void;
   searchUser: (data: string) => void;
+  getProductReports: (id: string) => Promise<void>;
 }
 
 export const useAdminStore = create<AdminStore>((set, get) => ({
@@ -33,6 +43,7 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
   userScans: [],
   products: [],
   filteredProducts: [],
+  productReports: [],
 
   getAllProducts: async (currentPage) => {
     try {
@@ -115,5 +126,15 @@ export const useAdminStore = create<AdminStore>((set, get) => ({
     );
 
     set({ filteredUsers: filtered });
+  },
+
+  getProductReports: async (id) => {
+    try {
+      const res = await axiosInstance.get(`/admin/product-reports/${id}`);
+      set({ productReports: res.data });
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error?.response?.data?.message);
+    }
   },
 }));

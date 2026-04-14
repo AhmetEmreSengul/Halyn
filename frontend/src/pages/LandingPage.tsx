@@ -189,7 +189,7 @@ const LandingPage = () => {
           <LoadingSkeleton />
         </p>
       )}
-      {product && <ProductCard product={product} />}
+      {product && <ProductCard product={product} showProductReport={true} />}
       {ingredientsProduct && (
         <IngredientScanCard ingredientProduct={ingredientsProduct} />
       )}
@@ -216,6 +216,7 @@ const LandingPage = () => {
                   key={product._id}
                   product={product}
                   showScanDelete={false}
+                  showProductReport={true}
                 />
               ))}
             </div>
