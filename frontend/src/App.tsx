@@ -15,6 +15,7 @@ import ManageProducts from "./pages/ManageProducts";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AllScans from "./pages/AllScans";
+import ProductReports from "./pages/ProductReports";
 
 const App = () => {
   const { isCheckingAuth, authUser, checkAuth } = useAuthStore();
@@ -64,6 +65,7 @@ const App = () => {
         <Route path="/all-scans" element = {<AllScans/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/product-reports/:id" element = {<ProductReports/>} />
       </Routes>
     </div>
   );

@@ -3,18 +3,22 @@ import { useScanStore, type Product } from "../store/useScanStore";
 import { useAdminStore } from "../store/useAdminStore";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { statusConfig } from "../Data";
+import { Link } from "react-router";
+import ConfirmModal from "./ConfirmModal";
 
 const ProductCard = ({
   product,
   showScanDelete,
   showProductDelete,
   showProductReport,
+  showReportInfo,
   scanId,
 }: {
   product: Product;
   showScanDelete?: boolean;
   showProductDelete?: boolean;
   showProductReport?: boolean;
+  showReportInfo?: boolean;
   scanId?: string;
 }) => {
   const [showIngredients, setShowIngredients] = useState(false);
@@ -49,7 +53,11 @@ const ProductCard = ({
   };
 
   const handleReportProduct = async () => {
-    if (reportData && reportProduct) {
+    if (!reportData.reportReason) {
+      return;
+    }
+
+    if (reportData.reportReason && reportProduct) {
       await reportProduct(
         reportData._id,
         reportData.reportReason,
@@ -142,6 +150,14 @@ const ProductCard = ({
               Report Issue
             </button>
           )}
+          {showReportInfo && (
+            <Link
+              to={`/product-reports/${product._id}`}
+              className="p-2  rounded-lg bg-red-400 hover:bg-red-500 cursor-pointer transition"
+            >
+              View Reports
+            </Link>
+          )}
         </div>
 
         <div className="px-7 py-5 border-b border-stone-200">
@@ -225,71 +241,24 @@ const ProductCard = ({
       </div>
 
       {scanId === deleteScanId && showScanDelete && (
-        <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
-          <div className="w-full max-w-md p-2 text-center md:p-0">
-            <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
-              <p className="text-xl text-black leading-snug wrap-break-word">
-                Are you sure you want to delete this scan? This cannot be
-                undone.
-              </p>
-              <div className="flex gap-2.5">
-                <button
-                  onClick={() => setDeleteScanId("")}
-                  className="px-4 py-2.5 text-sm font-semibold hover:text-black rounded-lg border border-stone-200 hover:bg-stone-100 0 transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteScan}
-                  className={`px-4 py-2.5 text-sm font-semibold text-white rounded-lg ${isDeletingScan ? "bg-gray-400 cursor-not-allowed" : "bg-red-400 hover:bg-red-500 cursor-pointer"} transition `}
-                >
-                  {isDeletingScan ? (
-                    <span className="inline-flex items-center gap-2">
-                      Deleting
-                      <AiOutlineLoading3Quarters className="size-5 animate-spin" />
-                    </span>
-                  ) : (
-                    "Delete scan"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal
+          _id={deleteScanId}
+          confirmLabel="Delete Scan"
+          isLoading={isDeletingScan}
+          message="Are you sure you want to delete this scan? This cannot be undone."
+          onCancel={() => setDeleteScanId("")}
+          onConfirm={handleDeleteScan}
+        />
       )}
       {product._id === deleteProductId && showProductDelete && (
-        <div className="inset-0 flex h-screen w-screen items-center justify-center fixed bg-black/40 z-10">
-          <div className="w-full max-w-md p-2 text-center md:p-0">
-            <div className="bg-green-200/60 backdrop-blur-sm rounded-xl p-5 flex flex-col items-center justify-center gap-2.5 border border-white">
-              <p className="text-xl text-black leading-snug wrap-break-word">
-                Are you sure you want to delete this scan? This cannot be
-                undone.
-              </p>
-              <div className="flex gap-2.5">
-                <button
-                  onClick={() => setDeleteProductId("")}
-                  className="px-4 py-2.5 text-sm font-semibold hover:text-black rounded-lg border border-stone-200 hover:bg-stone-100 0 transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteProduct}
-                  className={`px-4 py-2.5 text-sm font-semibold text-white rounded-lg ${isDeleting ? "bg-gray-400 cursor-not-allowed" : "bg-red-400 hover:bg-red-500 cursor-pointer"} transition `}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? (
-                    <span className="inline-flex items-center gap-2">
-                      Deleting
-                      <AiOutlineLoading3Quarters className="size-5 animate-spin" />
-                    </span>
-                  ) : (
-                    "Delete product"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal
+          confirmLabel="Delete product"
+          isLoading={isDeleting}
+          message="Are you sure you want to delete this product? This cannot be undone."
+          onCancel={setDeleteProductId}
+          onConfirm={handleDeleteProduct}
+          _id={deleteProductId}
+        />
       )}
 
       {product._id === reportData._id && showProductReport && (
@@ -302,6 +271,7 @@ const ProductCard = ({
                   setReportData({ ...reportData, reportReason: e.target.value })
                 }
                 className="p-2 rounded-lg border-2 bg-black/50"
+                required
               >
                 <option value="">Select reason</option>
                 <option value="inappropriate">Inappropriate</option>

@@ -8,6 +8,7 @@ interface ProductReport {
   user: AuthUser;
   productId: string;
   reportReason: "inappropriate" | "fake" | "spam" | "other";
+  reportDescription: string;
   createdAt: Date;
   updatedAt: Date;
 }

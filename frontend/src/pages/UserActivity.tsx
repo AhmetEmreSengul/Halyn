@@ -32,7 +32,7 @@ const UserActivity = () => {
   }
 
   return (
-    <div className="w-screen h-screen grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-center gap-2 bg-black">
+    <div className="w-screen min-h-screen pt-30 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-center justify-center gap-2 bg-black">
       {userScans.map((scan) => {
         if (scan.productDeleted) {
           return (

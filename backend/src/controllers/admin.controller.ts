@@ -108,9 +108,16 @@ export const getProductReports = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const reports = await Report.find({ productId: id }).populate("userId");
+    const reports = await Report.find({ productId: id })
+      .populate("userId")
+      .lean();
 
-    return res.status(200).json(reports);
+    const formatted = reports.map(({ userId, ...rest }) => ({
+      ...rest,
+      user: userId,
+    }));
+
+    return res.status(200).json(formatted);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
