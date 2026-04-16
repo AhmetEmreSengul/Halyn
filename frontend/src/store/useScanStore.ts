@@ -58,7 +58,7 @@ interface ScanStore {
   getUsersPastScans: (currentPage?: number) => Promise<void>;
   getMostPopularProducts: () => Promise<void>;
   deleteScan: (id: string) => Promise<void>;
-  getAllScans: () => Promise<void>;
+  getAllScans: (currentPage?: number) => Promise<void>;
   reportProduct: (
     id: string,
     reportReason: string,
@@ -78,11 +78,14 @@ export const useScanStore = create<ScanStore>((set) => ({
   allScans: [],
   ingredientsProduct: null,
 
-  getAllScans: async () => {
+  getAllScans: async (currentPage) => {
     try {
       set({ isFetching: true });
-      const res = await axiosInstance.get("/scan/all-scans");
-      set({ allScans: res.data });
+      const res = await axiosInstance.get(
+        `/scan/all-scans?page=${currentPage}&limit=8`,
+      );
+      set({ allScans: res.data.scans });
+      set({ totalPages: res.data.totalPages });
     } catch (error) {
       console.error(error);
     } finally {

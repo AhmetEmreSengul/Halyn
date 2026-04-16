@@ -19,9 +19,25 @@ const normalizeText = (text: string) => {
 
 export const getAllScans = async (req: Request, res: Response) => {
   try {
-    const scans = await Product.find();
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    const scans = await Product.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
-    return res.status(200).json(scans);
+    const totalScans = await Product.countDocuments({ _id: { $ne: null } });
+
+    if (!scans) {
+      return res.status(404).json({ message: "Scans not found" });
+    }
+
+    return res.status(200).json({
+      scans,
+      currentPage: page,
+      totalPages: Math.ceil(totalScans / limit),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -267,4 +283,3 @@ export const reportProduct = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-

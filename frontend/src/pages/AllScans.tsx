@@ -1,14 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import { useScanStore } from "../store/useScanStore";
 import ProductCard from "../components/ProductCard";
 
 const AllScans = () => {
-  const { allScans, isFetching, getAllScans } = useScanStore();
+  const { allScans, isFetching, totalPages, getAllScans } = useScanStore();
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    getAllScans();
-  }, []);
+    getAllScans(currentPage);
+  }, [currentPage]);
+
+  console.log(allScans);
 
   if (isFetching) {
     return (
@@ -27,10 +30,25 @@ const AllScans = () => {
   console.log(allScans);
 
   return (
-    <div className="flex items-center justify-center pt-30">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="flex items-center justify-center pt-30 flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {allScans.map((scan) => (
           <ProductCard product={scan} key={scan._id} />
+        ))}
+      </div>
+      <div className="py-10">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`${
+              page === currentPage
+                ? "bg-green-300 text-white"
+                : "bg-white text-green-300"
+            } px-3 py-1 rounded-lg mr-2 cursor-pointer`}
+          >
+            {page}
+          </button>
         ))}
       </div>
     </div>
