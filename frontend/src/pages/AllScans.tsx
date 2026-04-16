@@ -11,8 +11,6 @@ const AllScans = () => {
     getAllScans(currentPage);
   }, [currentPage]);
 
-  console.log(allScans);
-
   if (isFetching) {
     return (
       <div className="min-h-screen w-screen py-30 block md:flex items-center justify-center">
@@ -27,13 +25,11 @@ const AllScans = () => {
     );
   }
 
-  console.log(allScans);
-
   return (
     <div className="flex items-center justify-center pt-30 flex-col">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {allScans.map((scan) => (
-          <ProductCard product={scan} key={scan._id} />
+          <ProductCard product={scan} key={scan._id} showProductReport />
         ))}
       </div>
       <div className="py-10">
