@@ -36,7 +36,7 @@ const AdminDashboard = () => {
     );
   }
 
-  const usersToBeMappped = filteredUsers ? filteredUsers : users;
+  const usersToBeMappped = search.length > 0 ? filteredUsers : users;
 
   return (
     <div className="flex flex-col items-center justify-center bg-black w-screen h-screen">

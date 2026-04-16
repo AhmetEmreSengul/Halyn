@@ -20,12 +20,16 @@ const ManageProducts = () => {
   }, [currentPage]);
 
   useEffect(() => {
-    setTimeout(() => {
+    const delay = setTimeout(() => {
       searchProduct(searchProductInput);
-    }, 1000);
-  }, [searchProductInput, searchProduct]);
+      setCurrentPage(1);
+    }, 500);
 
-  const productsToBeMapped = filteredProducts ? filteredProducts : products;
+    return () => clearTimeout(delay);
+  }, [searchProductInput]);
+
+  const productsToBeMapped =
+    searchProductInput.trim().length > 0 ? filteredProducts : products;
 
   if (isLoading) {
     return (
@@ -47,7 +51,7 @@ const ManageProducts = () => {
       <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {productsToBeMapped.map((product) => (
           <div key={product._id}>
-            <ProductCard product={product} showProductDelete showReportInfo/>
+            <ProductCard product={product} showProductDelete showReportInfo />
           </div>
         ))}
       </div>
