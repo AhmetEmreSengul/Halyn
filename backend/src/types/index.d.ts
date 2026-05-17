@@ -8,6 +8,16 @@ declare global {
       user?: UserDocument;
     }
   }
-}
 
-export {};
+  interface ProductDataResponse {
+    status: number;
+    product: {
+      product_name: string;
+      brands: string;
+      ingredients_text: string;
+      ingredients: { text: string }[];
+      completeness: number;
+      last_modified_t: number;
+    };
+  }
+}

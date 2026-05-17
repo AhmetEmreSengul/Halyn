@@ -86,13 +86,13 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
       `https://world.openfoodfacts.org/api/v2/product/${barcode}`,
     );
 
-    if ((response.data as any).status === 0) {
+    if ((response.data as ProductDataResponse).status === 0) {
       return res.status(404).json({
         message: "Product not found in database",
       });
     }
 
-    const productData = (response.data as any).product;
+    const productData = (response.data as ProductDataResponse).product;
 
     if (!productData) {
       return res.status(404).json({ message: "Product not found" });
