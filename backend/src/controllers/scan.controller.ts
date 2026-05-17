@@ -62,14 +62,14 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     const existingScan = await ScanHistory.findOne({
       barcode,
-      userId: req.user ? (req.user as any)._id : null,
+      userId: req.user ? req.user._id : null,
     });
 
     const existingProduct = await Product.findOne({ barcode });
     if (existingProduct) {
       if (!existingScan && req.user) {
         await ScanHistory.create({
-          userId: (req.user as any)._id,
+          userId: req.user._id,
           productId: existingProduct._id,
           barcode,
           scanType: "barcode",
@@ -124,7 +124,7 @@ export const scanProductBarcode = async (req: Request, res: Response) => {
 
     if (req.user && !existingScan) {
       await ScanHistory.create({
-        userId: (req.user as any)._id,
+        userId: req.user._id,
         productId: newProduct._id,
         barcode,
         scanType: "barcode",
@@ -176,7 +176,7 @@ export const scanIngredientsText = async (req: Request, res: Response) => {
 
 export const getUsersPastScans = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any)._id;
+    const userId = req.user!._id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
@@ -244,7 +244,7 @@ export const getMostPopularProducts = async (req: Request, res: Response) => {
 export const reportProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userId = (req.user as any)._id;
+    const userId = req.user!._id;
     const { reportReason, reportDescription } = req.body;
 
     const product = await Product.findById(id);

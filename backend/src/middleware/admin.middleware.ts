@@ -7,7 +7,7 @@ export const isAdmin = async (
   next: NextFunction,
 ) => {
   try {
-    const userId = (req.user as any)._id;
+    const userId = req.user!._id;
 
     const user = await User.findById(userId);
 

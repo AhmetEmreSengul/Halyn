@@ -19,7 +19,7 @@ export const optionalAuth = async (
     const user = await User.findById(decoded.userId).select("-password");
 
     if (user) {
-      (req as any).user = user;
+      req.user = user;
     }
 
     next();

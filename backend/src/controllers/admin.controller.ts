@@ -40,7 +40,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const users = await User.find({
-      _id: { $ne: (req.user as any)._id },
+      _id: { $ne: req.user?._id },
       role: "user",
     })
       .skip(skip)
@@ -48,7 +48,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
       .select("-password");
 
     const totalUsers = await User.countDocuments({
-      _id: { $ne: (req.user as any)._id },
+      _id: { $ne: req.user?._id },
       role: "user",
     });
 

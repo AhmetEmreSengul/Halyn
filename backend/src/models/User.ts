@@ -13,8 +13,6 @@ export interface IUser extends Document {
   passwordResetExpiresAt: Date | null;
 }
 
-export type UserDocument = HydratedDocument<IUser>;
-
 const userSchema = new Schema<IUser>(
   {
     email: {
@@ -68,5 +66,7 @@ const userSchema = new Schema<IUser>(
 );
 
 const User = mongoose.model<IUser>("User", userSchema);
+
+export type UserDocument = HydratedDocument<IUser>;
 
 export default User;
