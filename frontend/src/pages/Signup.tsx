@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { FaGoogle } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router";
 
 const Login = () => {
   const { signup, isSigninUp } = useAuthStore();
 
+  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -47,17 +48,30 @@ const Login = () => {
               setFormData({ ...formData, email: e.target.value })
             }
           />
-          <input
-            className="p-4 w-full border-2 rounded-lg"
-            placeholder="Password"
-            type="password"
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-          />
+          <div className="relative">
+            <input
+              className="p-4 w-full border-2 rounded-lg"
+              placeholder="Password"
+              type={isVisible ? "text" : "password"}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              required
+            />
+            <span className="absolute top-1/3 right-5">
+              {isVisible ? (
+                <FaEye className="size-6" onClick={() => setIsVisible(false)} />
+              ) : (
+                <FaEyeSlash
+                  className="size-6"
+                  onClick={() => setIsVisible(true)}
+                />
+              )}
+            </span>
+          </div>
         </div>
         <button
-          className="bg-stone-300 hover:bg-stone-400 text-black hover:text-white p-4 rounded-lg cursor-pointer transition"
+          className="bg-white hover:bg-transparent text-black hover:text-white border-2 border-white p-4 rounded-lg cursor-pointer transition"
           type="submit"
         >
           {isSigninUp ? "Signing up" : "Signup"}

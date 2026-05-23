@@ -1,12 +1,12 @@
 import { useState, type ChangeEvent } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { FaFish, FaGoogle } from "react-icons/fa";
-import { Link, useNavigate } from "react-router";
+import { FaEye, FaEyeSlash, FaFish, FaGoogle } from "react-icons/fa";
+import { Link } from "react-router";
 
 const Login = () => {
   const { login, isLoggingIn } = useAuthStore();
-  const navigate = useNavigate();
 
+  const [isVisible, setIsVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,7 +21,6 @@ const Login = () => {
   const handleSubmit = (e: ChangeEvent) => {
     e.preventDefault();
     login(formData);
-    navigate("/");
   };
 
   return (
@@ -41,18 +40,30 @@ const Login = () => {
             }
             required
           />
-          <input
-            className="p-4 w-full border-2 rounded-lg"
-            placeholder="Password"
-            type="password"
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            required
-          />
+          <div className="relative">
+            <input
+              className="p-4 w-full border-2 rounded-lg"
+              placeholder="Password"
+              type={isVisible ? "text" : "password"}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              required
+            />
+            <span className="absolute top-1/3 right-5">
+              {isVisible ? (
+                <FaEye className="size-6" onClick={() => setIsVisible(false)} />
+              ) : (
+                <FaEyeSlash
+                  className="size-6"
+                  onClick={() => setIsVisible(true)}
+                />
+              )}
+            </span>
+          </div>
         </div>
         <button
-          className="bg-stone-300 hover:bg-stone-400 text-black hover:text-white p-4 rounded-lg cursor-pointer transition"
+          className="bg-white hover:bg-transparent text-black hover:text-white border-2 border-white p-4 rounded-lg cursor-pointer transition"
           type="submit"
         >
           {isLoggingIn ? "Logging in..." : "Login"}
@@ -64,7 +75,7 @@ const Login = () => {
           Forgot Password? <FaFish className="size-7" />
         </Link>
         <button
-          className="border-2 border-stone-300  hover:bg-white text-white hover:text-black p-4 rounded-lg flex items-center justify-center gap-3 cursor-pointer transition"
+          className="border-2 border-white hover:bg-white text-white hover:text-black p-4 rounded-lg flex items-center justify-center gap-3 cursor-pointer transition"
           type="button"
           onClick={handleGoogleLogin}
         >
