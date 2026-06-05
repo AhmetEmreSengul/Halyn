@@ -212,12 +212,19 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
 export const deleteScan = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const userId = req.user!._id;
 
-    const scan = await ScanHistory.findByIdAndDelete(id);
+    const scan = await ScanHistory.findById(id);
 
     if (!scan) {
       return res.status(404).json({ message: "Scan not found" });
     }
+
+    if (!scan.userId.equals(userId)) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    await ScanHistory.findByIdAndDelete(id);
 
     return res.status(200).json({ message: "Scan deleted successfully" });
   } catch (error) {
