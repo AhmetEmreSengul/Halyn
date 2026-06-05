@@ -3,6 +3,7 @@ import {
   deleteScan,
   getAllScans,
   getMostPopularProducts,
+  getPastReports,
   getUsersPastScans,
   reportProduct,
   scanIngredientsText,
@@ -24,5 +25,6 @@ router.get("/past-scans", protectRoute, getUsersPastScans);
 router.get("/popular", getMostPopularProducts);
 router.delete("/delete-scan/:id", protectRoute, deleteScan);
 router.post("/report-product/:id", protectRoute, reportProduct);
+router.get("/past-reports", protectRoute, getPastReports);
 
 export default router;
