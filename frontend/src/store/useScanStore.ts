@@ -32,6 +32,14 @@ export interface PastScans {
   barcode: string;
 }
 
+export interface ProductReport {
+  _id: string;
+  productId: Product;
+  reportReason: string;
+  reportDescription: string;
+  createdAt: Date;
+}
+
 export interface IngredientProduct {
   ingredientsText: string;
   halalStatus: HalalStatus;
@@ -48,6 +56,7 @@ interface ScanStore {
   isDeleting: boolean;
   isReporting: boolean;
   pastScans: PastScans[];
+  pastReports: ProductReport[];
   popularScans: Product[];
   allScans: Product[];
   ingredientsProduct: IngredientProduct | null;
@@ -64,6 +73,7 @@ interface ScanStore {
     reportReason: string,
     reportDescription?: string,
   ) => Promise<void>;
+  getPastReports: () => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
@@ -74,6 +84,7 @@ export const useScanStore = create<ScanStore>((set) => ({
   isDeleting: false,
   isReporting: false,
   pastScans: [],
+  pastReports: [],
   popularScans: [],
   allScans: [],
   ingredientsProduct: null,
@@ -181,6 +192,19 @@ export const useScanStore = create<ScanStore>((set) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isReporting: false });
+    }
+  },
+
+  getPastReports: async () => {
+    try {
+      set({ isFetching: true });
+      const res = await axiosInstance.get("/scan/past-reports");
+      set({ pastReports: res.data });
+    } catch (error: any) {
+      console.error(error.response.data.message);
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isFetching: false });
     }
   },
 }));

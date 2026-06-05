@@ -4,6 +4,7 @@ import ProductCard from "../components/ProductCard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import { FiCopy } from "react-icons/fi";
 import toast from "react-hot-toast";
+import { Link } from "react-router";
 
 const ScanHistory = () => {
   const { totalPages, pastScans, isFetching, getUsersPastScans, deleteScan } =
@@ -28,10 +29,10 @@ const ScanHistory = () => {
     );
   }
 
-  if (pastScans.length === 0) {
+  if (pastScans.length == 0) {
     return (
       <div className="min-h-screen w-screen py-30 flex items-center justify-center">
-        <p className="text-2xl font-bold text-stone-900 leading-snug wrap-break-word">
+        <p className="text-2xl font-bold leading-snug wrap-break-word">
           No scan history found
         </p>
       </div>
@@ -47,6 +48,12 @@ const ScanHistory = () => {
 
   return (
     <div className="min-h-screen w-screen py-30 flex flex-col items-center justify-center">
+      <Link
+        to="/report-history"
+        className="font-bold text-xl p-5 w-[80%] text-red-200 underline"
+      >
+        See Report History
+      </Link>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 p-2">
         {pastScans.map((scan) => {
           if (scan.productDeleted) {

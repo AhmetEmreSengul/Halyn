@@ -16,6 +16,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AllScans from "./pages/AllScans";
 import ProductReports from "./pages/ProductReports";
+import ReportHistory from "./pages/ReportHistory";
 
 const App = () => {
   const { isCheckingAuth, authUser, checkAuth } = useAuthStore();
@@ -49,6 +50,7 @@ const App = () => {
           element={authUser ? <Navigate to={"/"} /> : <Signup />}
         />
         <Route path="/scan-history" element={<ScanHistory />} />
+        <Route path="/report-history" element={<ReportHistory />} />
         <Route path="/auth/google/success" element={<GoogleSuccess />} />
         <Route
           path="/admin-dashboard"
@@ -62,10 +64,10 @@ const App = () => {
           path="/manage-products"
           element={isAdmin ? <ManageProducts /> : <Navigate to={"/"} />}
         />
-        <Route path="/all-scans" element = {<AllScans/>} />
+        <Route path="/all-scans" element={<AllScans />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/product-reports/:id" element = {<ProductReports/>} />
+        <Route path="/product-reports/:id" element={<ProductReports />} />
       </Routes>
     </div>
   );
