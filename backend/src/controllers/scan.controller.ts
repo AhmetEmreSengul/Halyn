@@ -182,6 +182,10 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const scans = await ScanHistory.find({ userId })
       .sort({ createdAt: -1 })
       .populate("productId")
@@ -212,10 +216,18 @@ export const getUsersPastScans = async (req: Request, res: Response) => {
 
 export const deleteScan = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const userId = req.user!._id;
 
     const scan = await ScanHistory.findById(id);
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid scan id" });
+    }
 
     if (!scan) {
       return res.status(404).json({ message: "Scan not found" });
@@ -225,7 +237,7 @@ export const deleteScan = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    await ScanHistory.findByIdAndDelete(id);
+    await scan.deleteOne();
 
     return res.status(200).json({ message: "Scan deleted successfully" });
   } catch (error) {
