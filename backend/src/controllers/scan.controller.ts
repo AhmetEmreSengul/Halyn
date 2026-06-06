@@ -5,6 +5,7 @@ import axios from "axios";
 import ScanHistory from "../models/ScanHistory";
 import { analyzeIngredients } from "../lib/analyzer";
 import { Report } from "../models/Reports";
+import mongoose from "mongoose";
 
 const normalizeText = (text: string) => {
   return text
@@ -305,5 +306,41 @@ export const getPastReports = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deletePastReportById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid report id" });
+    }
+
+    const report = await Report.findById(id);
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    if (!report.userId.equals(userId)) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    await report.deleteOne();
+
+    return res.status(200).json({
+      message: "Report deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
