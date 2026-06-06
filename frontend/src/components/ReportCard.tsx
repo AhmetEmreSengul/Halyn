@@ -1,39 +1,8 @@
-import type { ProductReport } from "../store/useScanStore";
-
-const statusConfig = {
-  halal: {
-    label: "Halal",
-    icon: "✓",
-    iconBg: "bg-green-500",
-    iconRing: "ring-green-200",
-    sectionBg: "bg-green-50",
-    textColor: "text-green-800",
-  },
-  haram: {
-    label: "Haram",
-    icon: "✕",
-    iconBg: "bg-red-500",
-    iconRing: "ring-red-200",
-    sectionBg: "bg-red-50",
-    textColor: "text-red-800",
-  },
-  doubtful: {
-    label: "Doubtful",
-    icon: "?",
-    iconBg: "bg-amber-500",
-    iconRing: "ring-amber-200",
-    sectionBg: "bg-amber-50",
-    textColor: "text-amber-800",
-  },
-  unknown: {
-    label: "Unknown",
-    icon: "–",
-    iconBg: "bg-gray-400",
-    iconRing: "ring-gray-200",
-    sectionBg: "bg-gray-50",
-    textColor: "text-gray-700",
-  },
-};
+import { useState } from "react";
+import { useScanStore, type ProductReport } from "../store/useScanStore";
+import { FaTrash } from "react-icons/fa";
+import ConfirmModal from "./ConfirmModal";
+import { statusConfig } from "../Data";
 
 const formatDate = (iso: Date) =>
   new Date(iso).toLocaleDateString("en-GB", {
@@ -43,22 +12,37 @@ const formatDate = (iso: Date) =>
   });
 
 export default function ReportCard({ report }: { report: ProductReport }) {
-  const { productId, reportReason, reportDescription, createdAt } = report;
+  const { _id, productId, reportReason, reportDescription, createdAt } = report;
   const { name, brand, halalStatus, scanCount } = productId;
   const s = statusConfig[halalStatus] ?? statusConfig.unknown;
+  const [deleteId, setDeleteId] = useState("");
+  const { isDeleting, deletePastReportById } = useScanStore();
+
+  const handleDeletePastReport = async () => {
+    await deletePastReportById(deleteId);
+    setDeleteId("");
+  };
 
   return (
     <div className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white shadow-sm overflow-hidden">
       <div className="px-6 pt-6 pb-4 border-b border-stone-100">
-        <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-2 font-mono">
-          Product report
-        </p>
-        <p className="text-xl font-semibold text-stone-900">{name}</p>
-        {brand && <p className="text-sm text-stone-500 mt-0.5">{brand}</p>}
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-2 font-mono">
+            Product report
+          </p>
+          <p className="text-xl font-semibold text-stone-900">{name}</p>
+          {brand && <p className="text-sm text-stone-500 mt-0.5">{brand}</p>}
+          <p
+            className="text-red-400 hover:text-red-500 transition size-5 py-2 px-1 cursor-pointer"
+            onClick={() => setDeleteId(_id)}
+          >
+            <FaTrash />
+          </p>
+        </div>
       </div>
 
       <div
-        className={`px-6 py-4 border-b border-stone-100 flex items-center gap-4 ${s.sectionBg}`}
+        className={`px-6 py-4 border-b border-stone-100 flex items-center gap-4 ${s.badge}`}
       >
         <div
           className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-base shrink-0 ring-8 ${s.iconBg} ${s.iconRing}`}
@@ -66,10 +50,12 @@ export default function ReportCard({ report }: { report: ProductReport }) {
           {s.icon}
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-widest text-stone-400 font-mono mb-0.5">
+          <p className="text-xs uppercase text-stone-700 font-mono mb-0.5">
             Halal status
           </p>
-          <p className={`text-base font-semibold ${s.textColor}`}>{s.label}</p>
+          <p className={`text-base font-semibold ${s.label_color}`}>
+            {s.label}
+          </p>
         </div>
       </div>
 
@@ -101,6 +87,16 @@ export default function ReportCard({ report }: { report: ProductReport }) {
           </span>
         )}
       </div>
+      {deleteId === _id && (
+        <ConfirmModal
+          message="Are you sure you want to delete this report? This action cannot be undone."
+          onConfirm={handleDeletePastReport}
+          onCancel={() => setDeleteId("")}
+          confirmLabel="Delete report"
+          _id={_id}
+          isLoading={isDeleting}
+        />
+      )}
     </div>
   );
 }

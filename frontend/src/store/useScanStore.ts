@@ -74,6 +74,7 @@ interface ScanStore {
     reportDescription?: string,
   ) => Promise<void>;
   getPastReports: () => Promise<void>;
+  deletePastReportById: (id: string) => Promise<void>;
 }
 
 export const useScanStore = create<ScanStore>((set) => ({
@@ -205,6 +206,22 @@ export const useScanStore = create<ScanStore>((set) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isFetching: false });
+    }
+  },
+
+  deletePastReportById: async (id) => {
+    try {
+      set({ isDeleting: true });
+      await axiosInstance.delete(`/scan/delete-report/${id}`);
+      set((state) => ({
+        pastReports: state.pastReports.filter((report) => report._id !== id),
+      }))
+      toast.success("Report deleted.");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response?.data?.message);
+    } finally {
+      set({ isDeleting: false });
     }
   },
 }));
